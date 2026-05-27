@@ -1,0 +1,2125 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8" />
+<title>할미고 (HalmiGo) · 따뜻한 친구를 만드는 어르신 영상 매칭 · 인터랙티브 프로토타입</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" rel="stylesheet" />
+<style>
+:root{
+  /* Toss-warm system */
+  --bg:#F4F6F8;
+  --bg-2:#EAEEF2;
+  --surface:#FFFFFF;
+  --line:#E5E8EB;
+  --line-strong:#D1D6DB;
+  --ink:#191F28;
+  --ink-2:#4E5968;
+  --ink-3:#8B95A1;
+  --ink-4:#B0B8C1;
+
+  /* Brand */
+  --brand:#16C273;          /* match green - 시작 */
+  --brand-deep:#0B9D5B;
+  --brand-soft:#E0F8EC;
+  --blue:#3182F6;           /* Toss blue accent */
+  --blue-soft:#E8F2FE;
+
+  /* TikTok-ish */
+  --hot:#FE2C55;
+  --hot-deep:#E01D44;
+  --warn:#F5A623;
+  --yellow:#FFE176;
+
+  /* Tints */
+  --peach:#FFD9B0;
+  --rose:#FFC8D1;
+  --mint:#C7F0DD;
+  --lavender:#DDD6F5;
+
+  --radius:20px;
+  --radius-sm:14px;
+  --shadow:0 4px 14px -6px rgba(20,30,50,.10);
+  --shadow-pop:0 16px 38px -16px rgba(20,30,50,.28);
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;padding:0}
+body{
+  font-family:"Pretendard Variable","Pretendard","Noto Sans KR",-apple-system,BlinkMacSystemFont,system-ui,sans-serif;
+  background:
+    radial-gradient(1100px 600px at 8% -8%, #E8F8F0 0%, transparent 55%),
+    radial-gradient(900px 500px at 110% 10%, #FFF2E0 0%, transparent 55%),
+    var(--bg);
+  color:var(--ink);
+  -webkit-font-smoothing:antialiased;
+  font-feature-settings:"ss06","ss09";
+  padding:40px 32px 80px;
+}
+
+/* ============== PAGE HEADER ============== */
+.page{max-width:1440px;margin:0 auto}
+.topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:32px}
+.logo{display:flex;align-items:center;gap:12px}
+.logo .mark{
+  width:48px;height:48px;border-radius:14px;
+  background:linear-gradient(135deg,var(--brand) 0%,#22D88E 100%);
+  display:grid;place-items:center;color:#fff;font-size:24px;font-weight:900;
+  box-shadow:0 8px 18px -6px rgba(11,157,91,.4);
+}
+.logo h1{margin:0;font-size:22px;font-weight:800;letter-spacing:-.02em}
+.logo h1 small{color:var(--ink-3);font-weight:600;margin-left:6px;font-size:13px}
+.topbar .meta{display:flex;gap:10px}
+.pill{
+  background:var(--surface);border:1.5px solid var(--line);border-radius:999px;
+  padding:8px 14px;font-size:13px;font-weight:700;color:var(--ink-2);
+  display:flex;align-items:center;gap:6px;white-space:nowrap;
+}
+.pill .dot{width:7px;height:7px;border-radius:50%;background:var(--brand);box-shadow:0 0 0 3px var(--brand-soft)}
+
+.hero{display:grid;grid-template-columns:1.1fr .9fr;gap:48px;align-items:end;margin-bottom:56px}
+.hero h2{
+  margin:0;font-size:64px;line-height:1.02;font-weight:900;letter-spacing:-.03em;
+}
+.hero h2 .accent{
+  background:linear-gradient(110deg,var(--brand) 0%, var(--blue) 60%, var(--hot) 100%);
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+}
+.hero p{font-size:19px;line-height:1.55;color:var(--ink-2);margin:20px 0 0;max-width:560px;font-weight:500}
+.hero .kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.kpi{
+  background:var(--surface);border:1.5px solid var(--line);border-radius:18px;padding:18px;
+}
+.kpi .k{font-size:12px;font-weight:700;color:var(--ink-3);letter-spacing:.02em}
+.kpi .v{font-size:28px;font-weight:900;letter-spacing:-.02em;margin-top:6px}
+.kpi .v small{font-size:14px;font-weight:700;color:var(--ink-3);margin-left:4px}
+.kpi .sub{font-size:12px;color:var(--ink-3);margin-top:4px;font-weight:600}
+
+/* ============== PROTOTYPE STAGE ============== */
+.stage{
+  position:relative;
+  display:grid;grid-template-columns:280px 1fr 280px;gap:36px;
+  align-items:start;margin-bottom:80px;
+}
+.stage-card{
+  background:var(--surface);border:1.5px solid var(--line);border-radius:var(--radius);
+  padding:18px 20px;box-shadow:var(--shadow);
+}
+.stage-card h4{margin:0 0 6px;font-size:15px;font-weight:800;letter-spacing:-.01em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.stage-card p{margin:0;font-size:13px;color:var(--ink-2);line-height:1.55;font-weight:500}
+.stage-card + .stage-card{margin-top:14px}
+.stage-card .num{
+  display:inline-block;background:var(--blue-soft);color:var(--blue);
+  font-size:11px;font-weight:800;letter-spacing:.06em;padding:3px 8px;border-radius:6px;margin-bottom:8px;
+  white-space:nowrap;
+}
+.stage-card .num.hot{background:#FFE7EC;color:var(--hot)}
+.stage-card .num.brand{background:var(--brand-soft);color:var(--brand-deep)}
+.stage-card .num.warn{background:#FFF3DC;color:#9B6A00}
+
+.phone-stage{display:flex;justify-content:center;position:relative}
+
+/* ============== iPhone bezel ============== */
+.phone{
+  width:412px;height:870px;border-radius:56px;
+  background:linear-gradient(180deg,#0d0d0e,#1a1a1c);
+  padding:14px;
+  box-shadow:
+    0 60px 80px -40px rgba(20,30,50,.45),
+    0 20px 30px -20px rgba(20,30,50,.20),
+    inset 0 0 0 1.5px #34343a;
+  position:relative;flex:0 0 auto;
+}
+.phone::before{
+  content:"";position:absolute;left:50%;top:18px;transform:translateX(-50%);
+  width:120px;height:34px;background:#000;border-radius:18px;z-index:30;
+}
+.screen{
+  width:100%;height:100%;background:#fff;border-radius:44px;overflow:hidden;
+  position:relative;display:flex;flex-direction:column;
+}
+.statusbar{
+  height:50px;flex:0 0 auto;padding:0 28px;
+  display:flex;align-items:flex-end;justify-content:space-between;padding-bottom:8px;
+  font-size:15px;font-weight:700;letter-spacing:-.01em;
+  position:relative;z-index:5;
+}
+.statusbar .right{display:flex;gap:6px;align-items:center;font-size:13px}
+.statusbar .bat{
+  width:24px;height:11px;border:1.5px solid currentColor;border-radius:3px;position:relative;
+}
+.statusbar .bat::after{content:"";position:absolute;inset:1.5px;background:currentColor;width:75%;border-radius:1px}
+.statusbar.dark{color:#fff}
+.app-area{flex:1;display:flex;flex-direction:column;min-height:0;overflow:hidden;position:relative}
+
+/* ============== TAB BAR ============== */
+.tabbar{
+  flex:0 0 auto;background:#fff;border-top:1px solid var(--line);
+  padding:8px 6px 30px;display:grid;grid-template-columns:1fr 1fr 88px 1fr 1fr;align-items:center;gap:0;
+  z-index:10;
+}
+.tab{
+  display:flex;flex-direction:column;align-items:center;gap:3px;padding:8px 0;cursor:pointer;
+  color:var(--ink-4);font-size:11px;font-weight:700;letter-spacing:-.01em;
+  background:transparent;border:none;white-space:nowrap;
+}
+.tab .ico{font-size:22px;line-height:1}
+.tab.active{color:var(--ink)}
+.tab.active .ico{transform:scale(1.05)}
+.tab-plus{
+  display:flex;align-items:center;justify-content:center;cursor:pointer;background:transparent;border:none;padding:0;
+}
+.tab-plus .btn{
+  width:58px;height:42px;border-radius:14px;
+  background:linear-gradient(135deg,#22D6FF 0%,var(--hot) 60%,#FFD66E 120%);
+  display:grid;place-items:center;color:#fff;font-size:28px;font-weight:300;line-height:1;
+  box-shadow:0 8px 18px -6px rgba(254,44,85,.45);
+  position:relative;
+}
+.tab-plus .btn::before, .tab-plus .btn::after{
+  content:"";position:absolute;inset:0;border-radius:14px;
+}
+.tab-plus .btn::before{background:#22D6FF;mix-blend-mode:screen;transform:translateX(-3px);opacity:.55;border-radius:14px}
+.tab-plus .btn::after{background:var(--hot);mix-blend-mode:screen;transform:translateX(3px);opacity:.55;border-radius:14px}
+.tab-plus .glyph{position:relative;z-index:2}
+
+/* ============== SCREEN SWAP ============== */
+.screen-pane{display:none;flex:1;flex-direction:column;min-height:0}
+.screen-pane.active{display:flex}
+
+/* ========================================================
+   SCREEN 1: HOME (Azar-style 매칭)
+   ======================================================== */
+.s-home{flex:1;display:flex;flex-direction:column;overflow:hidden;background:var(--bg)}
+.s-home-top{padding:8px 24px 0;background:var(--bg);flex:0 0 auto;display:flex;align-items:center;justify-content:space-between;gap:12px}
+.s-home-top .greet{font-size:19px;font-weight:800;letter-spacing:-.02em;flex:1;min-width:0}
+.s-home-top .greet .main{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.s-home-top .bell{flex:0 0 auto}
+.s-home-top .greet small{display:block;font-size:13px;color:var(--ink-3);font-weight:600;margin-top:2px}
+.s-home-top .bell{
+  width:42px;height:42px;border-radius:14px;background:var(--surface);border:1.5px solid var(--line);
+  display:grid;place-items:center;font-size:20px;position:relative;
+}
+.s-home-top .bell::after{content:"";position:absolute;top:8px;right:9px;width:8px;height:8px;background:var(--hot);border-radius:50%;border:2px solid var(--surface)}
+.s-home-scroll{flex:1;overflow:auto;padding:16px 20px 16px;display:flex;flex-direction:column;gap:14px}
+
+.online-card{
+  background:linear-gradient(140deg,#10B981 0%,#16C273 50%,#0B9D5B 100%);
+  border-radius:20px;padding:18px 20px;color:#fff;position:relative;overflow:hidden;
+}
+.online-card::before{
+  content:"";position:absolute;right:-30px;top:-30px;width:160px;height:160px;border-radius:50%;
+  background:radial-gradient(circle,rgba(255,255,255,.18) 0%,transparent 70%);
+}
+.online-card .row{display:flex;align-items:center;justify-content:space-between;position:relative}
+.online-card .l .label{font-size:13px;font-weight:600;opacity:.88;white-space:nowrap}
+.online-card .l .big{font-size:28px;font-weight:900;margin-top:2px;letter-spacing:-.02em}
+.online-card .l .big small{font-size:14px;font-weight:700;opacity:.85;margin-left:4px}
+.online-card .r .stack{display:flex}
+.online-card .r .av{
+  width:36px;height:36px;border-radius:50%;border:2px solid #fff;background:var(--peach);
+  display:grid;place-items:center;font-size:18px;margin-left:-10px;
+}
+.online-card .r .av:nth-child(1){background:var(--peach);margin-left:0}
+.online-card .r .av:nth-child(2){background:var(--rose)}
+.online-card .r .av:nth-child(3){background:var(--mint)}
+
+.s-home-title{font-size:22px;font-weight:800;letter-spacing:-.02em;margin-top:6px}
+.s-home-title small{display:block;font-size:14px;color:var(--ink-3);font-weight:600;margin-top:2px}
+
+.match-hero{
+  background:var(--surface);border-radius:24px;padding:24px 20px 22px;border:1.5px solid var(--line);
+  display:flex;flex-direction:column;align-items:center;gap:14px;
+  box-shadow:var(--shadow);
+}
+.match-cta{
+  position:relative;width:200px;height:200px;border-radius:50%;
+  background:radial-gradient(circle at 35% 30%, #4FE0A4 0%, var(--brand) 55%, var(--brand-deep) 100%);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;color:#fff;
+  box-shadow:
+    0 28px 0 -12px var(--brand-deep),
+    0 32px 40px -10px rgba(11,157,91,.4),
+    inset 0 -10px 18px rgba(0,0,0,.15),
+    inset 0 8px 14px rgba(255,255,255,.3);
+  border:6px solid #fff;
+  cursor:pointer;
+}
+.match-cta .pulse{
+  position:absolute;inset:-6px;border-radius:50%;border:3px solid var(--brand);
+  animation:pulse 2.2s ease-out infinite;opacity:0;
+}
+.match-cta .pulse:nth-child(2){animation-delay:1.1s}
+@keyframes pulse{
+  0%{opacity:.55;transform:scale(1)}
+  100%{opacity:0;transform:scale(1.25)}
+}
+.match-cta .ico{font-size:54px;line-height:1}
+.match-cta .lbl{font-size:24px;font-weight:900;letter-spacing:-.02em}
+.match-hero .hint{font-size:14px;color:var(--ink-3);font-weight:600;white-space:nowrap}
+
+.filter-chips{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;width:100%}
+.chip{
+  background:var(--bg-2);border:1.5px solid transparent;border-radius:999px;
+  padding:9px 14px;font-size:13px;font-weight:700;color:var(--ink-2);
+  display:flex;align-items:center;gap:5px;white-space:nowrap;
+}
+.chip.on{background:var(--brand-soft);color:var(--brand-deep);border-color:#A6E5C3}
+
+.recent-row{display:flex;flex-direction:column;gap:10px;margin-top:4px}
+.recent-row .head{display:flex;align-items:center;justify-content:space-between}
+.recent-row .head h4{margin:0;font-size:17px;font-weight:800;letter-spacing:-.01em}
+.recent-row .head a{font-size:13px;color:var(--ink-3);font-weight:700}
+.recent-list{display:flex;gap:10px;overflow-x:auto;padding:2px 0 6px;margin:0 -20px;padding-left:20px;padding-right:20px}
+.recent-list::-webkit-scrollbar{display:none}
+.recent-card{
+  flex:0 0 130px;background:var(--surface);border:1.5px solid var(--line);border-radius:18px;
+  padding:14px 12px;display:flex;flex-direction:column;align-items:center;gap:8px;
+}
+.recent-card .av{width:64px;height:64px;border-radius:50%;display:grid;place-items:center;font-size:32px;border:3px solid #fff;box-shadow:0 0 0 1.5px var(--line);position:relative}
+.recent-card .av .live{position:absolute;right:-2px;bottom:-2px;width:18px;height:18px;border-radius:50%;background:var(--brand);border:2.5px solid #fff}
+.recent-card .nm{font-size:14px;font-weight:800;letter-spacing:-.01em;white-space:nowrap}
+.recent-card .meta{font-size:11px;color:var(--ink-3);font-weight:600;text-align:center;line-height:1.3}
+.recent-card .call-btn{
+  background:var(--brand);color:#fff;border:none;border-radius:10px;padding:6px 12px;
+  font-size:12px;font-weight:800;width:100%;white-space:nowrap;
+}
+
+/* ===== HOME — MATCHING (v1 ivory style + 임영웅) ===== */
+.s-matching{
+  flex:1;
+  background:linear-gradient(180deg,#FFF4D6 0%, #FCE4C2 100%);
+  position:relative;overflow:hidden;color:var(--ink);
+  display:flex;flex-direction:column;align-items:center;
+  padding:24px 24px 24px;
+}
+.s-matching h2{margin:8px 0 0;font-size:26px;font-weight:900;text-align:center;letter-spacing:-.02em}
+.s-matching .sub{font-size:16px;color:var(--ink-2);font-weight:600;text-align:center;margin-top:10px;line-height:1.5}
+.match-ring{position:relative;width:240px;height:240px;margin:28px 0 22px}
+.match-ring svg{position:absolute;inset:0;transform:rotate(-90deg)}
+.match-ring .center{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.match-ring .n{font-size:84px;font-weight:900;color:var(--brand-deep);line-height:1;letter-spacing:-.04em}
+.match-ring .u{font-size:18px;font-weight:700;color:var(--ink-2);margin-top:6px;letter-spacing:.04em}
+
+.music-now{
+  background:#fff;border-radius:18px;padding:12px 16px;display:flex;align-items:center;gap:12px;
+  border:1.5px solid var(--line);box-shadow:0 8px 0 -2px #FFD9B0;
+  width:100%;max-width:320px;
+}
+.music-now .album{
+  width:46px;height:46px;border-radius:50%;flex:0 0 auto;
+  background:radial-gradient(circle at 30% 30%,#FF8FA3,#C8418A 70%);
+  display:grid;place-items:center;font-size:20px;color:#fff;position:relative;
+  animation:spinslow 6s linear infinite;
+}
+.music-now .album::after{content:"";position:absolute;inset:40%;background:#1a0d11;border-radius:50%}
+@keyframes spinslow{ to{transform:rotate(360deg)} }
+.music-now .info{flex:1;min-width:0}
+.music-now .title{font-size:14px;font-weight:800;letter-spacing:-.01em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.music-now .artist{font-size:12px;color:var(--ink-3);font-weight:700;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.music-now .eq{display:flex;gap:3px;align-items:flex-end;flex:0 0 auto;height:20px}
+.music-now .eq b{display:inline-block;width:3px;background:var(--brand);border-radius:2px;transform-origin:bottom}
+.music-now .eq b:nth-child(1){height:8px;animation:eq 1s ease-in-out 0s infinite}
+.music-now .eq b:nth-child(2){height:18px;animation:eq 1.2s ease-in-out .15s infinite}
+.music-now .eq b:nth-child(3){height:12px;animation:eq .9s ease-in-out .3s infinite}
+.music-now .eq b:nth-child(4){height:16px;animation:eq 1.1s ease-in-out .45s infinite}
+@keyframes eq{0%,100%{transform:scaleY(1)}50%{transform:scaleY(.3)}}
+
+.match-msg{font-size:15px;font-weight:800;text-align:center;margin-top:16px;line-height:1.4;color:var(--ink);max-width:300px}
+.match-dots{display:flex;gap:7px;justify-content:center;margin-top:12px}
+.match-dots span{width:8px;height:8px;border-radius:50%;background:#E89B6C;opacity:.4}
+.match-dots span:nth-child(2){opacity:.7}
+.match-dots span:nth-child(3){opacity:1}
+
+.match-cancel{
+  margin-top:auto;background:#fff;border:1.5px solid var(--line);
+  border-radius:999px;padding:13px 28px;font-size:15px;font-weight:800;color:var(--ink-2);white-space:nowrap;
+}
+
+/* ===== HOME — IN-CALL with funny filters ===== */
+.s-incall{flex:1;background:#000;position:relative;overflow:hidden;color:#fff;display:flex;flex-direction:column}
+.s-incall .remote{
+  position:absolute;inset:0;background:#1a1a1a;overflow:hidden;
+}
+.s-incall .remote .layer{
+  position:absolute;inset:0;background-size:cover;background-position:center top;
+  transition:opacity .35s ease;
+}
+.s-incall .remote .layer.normal{background-image:url('assets/grandpa-normal-small.png');opacity:1}
+.s-incall .remote .layer.funny{background-image:url('assets/grandpa-bignose-small.png');opacity:0}
+.s-incall.filter-on .remote .layer.normal{opacity:0}
+.s-incall.filter-on .remote .layer.funny{opacity:1}
+
+/* Surprise filter toast */
+.filter-toast{
+  position:absolute;top:140px;left:50%;transform:translate(-50%,-16px) scale(.85);
+  background:#fff;color:var(--ink);padding:12px 20px;border-radius:999px;
+  display:flex;align-items:center;gap:10px;
+  font-size:15px;font-weight:900;letter-spacing:-.01em;white-space:nowrap;
+  box-shadow:0 16px 40px rgba(0,0,0,.5), 0 0 0 4px rgba(254,44,85,.25);
+  opacity:0;pointer-events:none;z-index:8;
+  transition:opacity .35s ease, transform .45s cubic-bezier(.4,1.6,.6,1);
+}
+.s-incall.filter-on .filter-toast{opacity:1;transform:translate(-50%,0) scale(1)}
+.filter-toast .emoji{font-size:22px;display:inline-block;animation:wobble .55s ease-in-out infinite alternate}
+@keyframes wobble{from{transform:rotate(-20deg) scale(1)}to{transform:rotate(20deg) scale(1.18)}}
+
+/* Confetti burst when filter activates */
+.filter-burst{
+  position:absolute;top:170px;left:50%;width:0;height:0;pointer-events:none;z-index:7;
+  opacity:0;transition:opacity .3s;
+}
+.s-incall.filter-on .filter-burst{opacity:1;animation:burst .8s ease-out}
+.filter-burst span{
+  position:absolute;font-size:18px;
+}
+@keyframes burst{
+  0%{opacity:0;transform:scale(.5)}
+  20%{opacity:1}
+  100%{opacity:0;transform:scale(1.5)}
+}
+
+.incall-top{position:absolute;top:50px;left:14px;right:14px;display:flex;align-items:center;gap:8px;z-index:5;min-width:0}
+.incall-topic{min-width:0}
+.incall-topic{
+  flex:1;background:var(--yellow);color:#3A2E00;border-radius:16px;padding:10px 14px;
+  display:flex;align-items:center;gap:8px;box-shadow:0 8px 20px rgba(0,0,0,.4);
+}
+.incall-topic .tag{background:#3A2E00;color:var(--yellow);font-size:10px;font-weight:900;padding:3px 7px;border-radius:5px;letter-spacing:.04em;white-space:nowrap;flex:0 0 auto}
+.incall-topic .q{font-size:13px;font-weight:800;letter-spacing:-.01em;line-height:1.3;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex:1;min-width:0}
+.incall-timer{
+  background:rgba(0,0,0,.6);color:#fff;border-radius:12px;padding:8px 12px;font-size:13px;font-weight:800;
+  backdrop-filter:blur(20px);white-space:nowrap;flex:0 0 auto;
+}
+
+.incall-name{
+  position:absolute;left:14px;bottom:200px;background:rgba(0,0,0,.5);backdrop-filter:blur(20px);
+  padding:8px 14px;border-radius:999px;display:flex;align-items:center;gap:7px;z-index:5;
+}
+.incall-name .live{width:8px;height:8px;border-radius:50%;background:var(--brand)}
+.incall-name .nm{font-size:14px;font-weight:800;white-space:nowrap}
+.incall-name .age{font-size:13px;font-weight:600;opacity:.75;white-space:nowrap}
+
+.incall-pip{
+  position:absolute;right:14px;top:110px;width:96px;height:128px;border-radius:18px;overflow:hidden;
+  background:linear-gradient(180deg,#D9B98E,#A37A52);border:3px solid #fff;
+  box-shadow:0 8px 20px rgba(0,0,0,.5);
+  display:flex;align-items:center;justify-content:center;z-index:5;
+}
+.incall-pip .pip-face{position:relative}
+.incall-pip .pip-face .base{font-size:80px;line-height:1}
+.incall-pip .pip-face .glasses{position:absolute;top:18px;left:50%;transform:translateX(-50%);font-size:32px}
+.incall-pip .pip-label{position:absolute;left:6px;bottom:6px;background:rgba(0,0,0,.6);padding:2px 6px;border-radius:5px;font-size:10px;font-weight:700}
+
+/* Filter dock */
+.incall-filters{
+  position:absolute;left:0;right:0;bottom:130px;padding:12px 16px;z-index:6;
+  display:flex;gap:10px;overflow-x:auto;
+}
+.incall-filters::-webkit-scrollbar{display:none}
+.f-item{
+  flex:0 0 auto;width:64px;display:flex;flex-direction:column;align-items:center;gap:6px;
+}
+.f-item .ico{
+  width:60px;height:60px;border-radius:50%;background:rgba(255,255,255,.15);border:2px solid rgba(255,255,255,.25);
+  display:grid;place-items:center;font-size:28px;backdrop-filter:blur(20px);
+}
+.f-item.on .ico{background:#fff;color:#000;border-color:#fff;box-shadow:0 0 0 3px var(--hot)}
+.f-item .nm{font-size:11px;font-weight:700;color:#fff;text-align:center;white-space:nowrap}
+
+/* Controls dock */
+.incall-dock{
+  position:absolute;left:0;right:0;bottom:0;padding:16px 16px 24px;z-index:7;
+  background:linear-gradient(180deg,rgba(0,0,0,0) 0%, rgba(0,0,0,.7) 60%, rgba(0,0,0,.95) 100%);
+  display:flex;justify-content:space-around;align-items:center;
+}
+.dock-btn{display:flex;flex-direction:column;align-items:center;gap:6px;color:#fff;font-size:11px;font-weight:700;background:transparent;border:none;white-space:nowrap}
+.dock-btn .b{
+  width:56px;height:56px;border-radius:50%;display:grid;place-items:center;font-size:24px;
+  background:rgba(255,255,255,.18);border:2px solid rgba(255,255,255,.3);backdrop-filter:blur(20px);
+}
+.dock-btn .b.on{background:#fff;color:#000;border-color:#fff}
+.dock-btn .b.end{background:var(--hot);border-color:#fff;box-shadow:0 4px 14px rgba(254,44,85,.6)}
+
+/* ========================================================
+   SCREEN 2: 노인 — Reels feed + 오늘의 노인 Tinder swipe
+   ======================================================== */
+/* Sub-tab switcher */
+.reel-subtabs{
+  position:absolute;top:54px;left:0;right:0;display:flex;justify-content:center;gap:28px;z-index:9;
+}
+.reel-subtab{
+  font-size:17px;font-weight:700;color:rgba(255,255,255,.5);padding:6px 4px;
+  background:transparent;border:none;position:relative;white-space:nowrap;cursor:pointer;letter-spacing:-.01em;
+}
+.reel-subtab.active{color:#fff;font-weight:900}
+.reel-subtab.active::after{content:"";position:absolute;left:18%;right:18%;bottom:-7px;height:3px;background:#fff;border-radius:2px}
+
+.reel-sub{display:none;flex:1;flex-direction:column;min-height:0;overflow:hidden;position:relative}
+.reel-sub.active{display:flex}
+
+/* ===== Today's Senior - 단순 스와이프 (한 명씩) ===== */
+.s-today{
+  flex:1;display:flex;flex-direction:column;overflow:hidden;position:relative;
+  background:linear-gradient(180deg,#1a0f0a 0%,#2a1f1c 100%);color:#fff;
+}
+.today-header{position:relative;padding:100px 24px 8px;text-align:center;z-index:2}
+.today-header .big{font-size:24px;font-weight:900;letter-spacing:-.02em;line-height:1.2}
+.today-header .big .gold{
+  background:linear-gradient(90deg,#FFD66E,#FF8FA3);
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+}
+.today-header .sub{font-size:14px;font-weight:700;color:rgba(255,255,255,.65);margin-top:6px;letter-spacing:-.01em}
+
+.swipe-stage{position:relative;flex:1;margin:14px 20px 0;perspective:1200px}
+.senior-card{
+  position:absolute;inset:0;border-radius:28px;overflow:hidden;
+  background:#222;box-shadow:0 28px 50px -16px rgba(0,0,0,.75);
+  transition:transform .45s cubic-bezier(.4,.2,.2,1), opacity .35s ease;
+  will-change:transform,opacity;
+}
+.senior-card .photo{
+  position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center 20%;
+  display:block;background:#1a1a1a;
+}
+.senior-card .shade{
+  position:absolute;inset:0;
+  background:linear-gradient(180deg,rgba(0,0,0,.15) 0%, transparent 30%, rgba(0,0,0,.92) 100%);
+}
+.senior-card .live-badge{
+  position:absolute;top:18px;right:18px;background:rgba(254,44,85,.95);color:#fff;
+  padding:7px 12px;border-radius:10px;font-size:11px;font-weight:900;letter-spacing:.04em;white-space:nowrap;
+  display:flex;align-items:center;gap:5px;backdrop-filter:blur(20px);
+}
+.senior-card .live-badge .dot{
+  width:6px;height:6px;background:#fff;border-radius:50%;
+  animation:liveBlink 1.2s ease-in-out infinite;
+}
+@keyframes liveBlink{0%,100%{opacity:1}50%{opacity:.3}}
+.senior-card .info{
+  position:absolute;left:22px;right:22px;bottom:24px;color:#fff;z-index:2;
+}
+.senior-card .info .nm{
+  font-size:34px;font-weight:900;letter-spacing:-.02em;line-height:1.1;
+  display:flex;align-items:baseline;gap:10px;white-space:nowrap;
+  text-shadow:0 4px 18px rgba(0,0,0,.6);
+}
+.senior-card .info .nm .age{font-size:22px;font-weight:800;opacity:.9}
+.senior-card .info .loc{
+  font-size:13px;font-weight:700;color:rgba(255,255,255,.85);margin-top:4px;
+  display:flex;align-items:center;gap:5px;white-space:nowrap;
+  text-shadow:0 2px 8px rgba(0,0,0,.4);
+}
+.senior-card .info .line{
+  font-size:17px;font-weight:800;line-height:1.35;margin-top:12px;
+  text-shadow:0 4px 14px rgba(0,0,0,.55);
+}
+
+/* Like / Nope swipe overlay stamps */
+.senior-card .stamp{
+  position:absolute;top:60px;font-size:28px;font-weight:900;letter-spacing:.1em;
+  padding:10px 16px;border:5px solid;border-radius:14px;z-index:4;
+  opacity:0;transition:opacity .15s;backdrop-filter:blur(6px);
+}
+.senior-card .stamp.like{right:22px;color:var(--brand);border-color:var(--brand);transform:rotate(14deg);background:rgba(11,157,91,.18)}
+.senior-card .stamp.nope{left:22px;color:var(--hot);border-color:var(--hot);transform:rotate(-14deg);background:rgba(254,44,85,.18)}
+
+/* Swipe exit animations */
+.senior-card.swipe-right{transform:translateX(140%) rotate(22deg);opacity:0}
+.senior-card.swipe-left{transform:translateX(-140%) rotate(-22deg);opacity:0}
+.senior-card.swipe-right .stamp.like,
+.senior-card.swipe-left .stamp.nope{opacity:1}
+
+/* Behind card stack hint */
+.senior-card.behind{transform:scale(.94) translateY(18px);opacity:.55;pointer-events:none;z-index:0}
+
+.swipe-actions{
+  position:relative;display:flex;justify-content:center;align-items:center;gap:24px;padding:18px 20px 10px;z-index:2;
+}
+.swipe-actions button{
+  border:none;cursor:pointer;flex:0 0 auto;
+  display:flex;align-items:center;justify-content:center;gap:8px;
+  font-weight:900;letter-spacing:-.01em;white-space:nowrap;
+  transition:transform .15s ease;
+}
+.swipe-actions button:active{transform:scale(.92)}
+.swipe-actions .pass{
+  background:#fff;color:var(--ink);
+  border-radius:999px;padding:16px 26px;font-size:16px;
+  box-shadow:0 8px 22px -6px rgba(0,0,0,.5);
+}
+.swipe-actions .pass .x{font-size:18px;color:var(--hot);font-weight:900}
+.swipe-actions .like{
+  background:linear-gradient(135deg,#22D88E,var(--brand));color:#fff;
+  border-radius:999px;padding:16px 30px;font-size:18px;
+  box-shadow:0 12px 26px -6px rgba(11,157,91,.7);
+}
+
+.swipe-hint{
+  position:relative;text-align:center;font-size:13px;font-weight:700;color:rgba(255,255,255,.55);
+  padding:0 0 14px;z-index:2;display:flex;justify-content:center;gap:14px;
+}
+.swipe-hint span{white-space:nowrap}
+
+/* Match popup overlay */
+.match-pop{
+  position:absolute;inset:0;background:rgba(0,0,0,.85);backdrop-filter:blur(12px);
+  display:none;flex-direction:column;align-items:center;justify-content:center;
+  z-index:20;padding:32px;text-align:center;color:#fff;
+}
+.match-pop.show{display:flex;animation:matchIn .5s cubic-bezier(.3,1.6,.5,1)}
+@keyframes matchIn{from{opacity:0;transform:scale(.7)}to{opacity:1;transform:scale(1)}}
+.match-pop .label{font-size:13px;font-weight:800;color:#FFD66E;letter-spacing:.18em;margin-bottom:6px}
+.match-pop .ttl{
+  font-size:46px;font-weight:900;letter-spacing:-.03em;line-height:1;
+  background:linear-gradient(90deg,#FFD66E,#FF7A8B,#FFD66E);
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+}
+.match-pop .sub{font-size:15px;font-weight:700;color:rgba(255,255,255,.85);margin-top:10px;line-height:1.5}
+.match-pop .photo{
+  width:160px;height:160px;border-radius:50%;background-size:cover;background-position:center 20%;
+  margin:22px 0 8px;border:5px solid #FFD66E;box-shadow:0 16px 40px rgba(255,166,90,.5);
+}
+.match-pop .call-btn{
+  background:var(--brand);color:#fff;border:none;border-radius:999px;
+  padding:16px 32px;font-size:17px;font-weight:900;margin-top:18px;white-space:nowrap;
+  box-shadow:0 12px 26px -6px rgba(11,157,91,.6);cursor:pointer;
+}
+.match-pop .close{
+  background:transparent;border:1.5px solid rgba(255,255,255,.3);color:rgba(255,255,255,.7);
+  border-radius:999px;padding:10px 22px;font-size:13px;font-weight:700;margin-top:8px;cursor:pointer;
+}
+.s-reels{flex:1;background:#000;position:relative;overflow:hidden;color:#fff;display:flex;flex-direction:column}
+.reel-top{
+  position:absolute;top:50px;left:0;right:0;z-index:5;display:flex;justify-content:center;gap:24px;
+}
+.reel-tab{font-size:16px;font-weight:700;color:rgba(255,255,255,.55);padding:6px 4px;background:transparent;border:none;position:relative;white-space:nowrap}
+.reel-tab.active{color:#fff;font-weight:900}
+.reel-tab.active::after{content:"";position:absolute;left:25%;right:25%;bottom:-6px;height:3px;background:#fff;border-radius:2px}
+.reel-search{position:absolute;top:54px;right:20px;font-size:22px;z-index:5}
+
+.reel-feed{position:absolute;inset:0;display:flex;flex-direction:column}
+.reel-card{
+  flex:1;position:relative;overflow:hidden;
+}
+.reel-bg-1{
+  background:
+    linear-gradient(180deg, rgba(0,0,0,0) 30%, rgba(0,0,0,.85) 100%),
+    radial-gradient(60% 50% at 50% 40%, #FF7AA8 0%, #C8418A 60%, #5A1545 100%);
+}
+.reel-figure{
+  position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+}
+.reel-figure video.reel-video{
+  position:absolute;inset:0;width:100%;height:100%;object-fit:cover;
+  background:#000;
+}
+.reel-sound{
+  position:absolute;top:96px;left:20px;z-index:7;
+  width:42px;height:42px;border-radius:50%;border:none;cursor:pointer;
+  background:rgba(0,0,0,.55);backdrop-filter:blur(20px);
+  color:#fff;font-size:18px;
+  display:grid;place-items:center;
+  box-shadow:0 6px 14px rgba(0,0,0,.35);
+}
+.reel-sound .ico-on{display:none}
+.reel-sound.unmuted .ico-mute{display:none}
+.reel-sound.unmuted .ico-on{display:inline}
+.reel-bg-1{background:#0a0a0a}
+.reel-figure .person{
+  font-size:200px;line-height:1;filter:drop-shadow(0 12px 30px rgba(0,0,0,.5));
+  animation:dance 1.4s ease-in-out infinite;
+}
+@keyframes dance{
+  0%,100%{transform:rotate(-6deg) translateY(0)}
+  50%{transform:rotate(6deg) translateY(-12px)}
+}
+.reel-figure .deco{position:absolute;font-size:42px}
+.reel-figure .deco.d1{top:18%;left:14%;animation:twinkle 1.4s ease infinite}
+.reel-figure .deco.d2{top:22%;right:16%;animation:twinkle 1.4s ease .4s infinite}
+.reel-figure .deco.d3{bottom:38%;left:8%;animation:twinkle 1.4s ease .8s infinite}
+.reel-figure .deco.d4{bottom:42%;right:8%;animation:twinkle 1.4s ease 1.2s infinite}
+
+.reel-bottom{
+  position:absolute;left:0;right:80px;bottom:18px;padding:0 20px;z-index:6;
+}
+.reel-creator{display:flex;align-items:center;gap:10px;min-width:0}
+.reel-creator .info{flex:1;min-width:0}
+.reel-creator .av{
+  width:46px;height:46px;border-radius:50%;background:linear-gradient(135deg,var(--peach),#E89B6C);
+  display:grid;place-items:center;font-size:24px;border:2.5px solid #fff;
+}
+.reel-creator .info .name{font-size:17px;font-weight:900;letter-spacing:-.01em;white-space:nowrap}
+.reel-creator .info .tag{font-size:13px;color:rgba(255,255,255,.78);font-weight:600;margin-top:1px;white-space:nowrap}
+.reel-creator .follow{
+  background:var(--hot);border:none;color:#fff;border-radius:8px;padding:7px 14px;font-size:13px;font-weight:900;margin-left:auto;
+  box-shadow:0 4px 12px rgba(254,44,85,.4);white-space:nowrap;flex:0 0 auto;
+}
+.reel-caption{
+  margin-top:12px;font-size:15px;line-height:1.45;font-weight:600;
+}
+.reel-caption b{font-weight:800}
+.reel-caption .hash{color:#22D6FF;font-weight:700}
+.reel-music{
+  margin-top:10px;display:flex;align-items:center;gap:8px;font-size:13px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+.reel-music .ico{
+  width:24px;height:24px;border-radius:6px;background:rgba(255,255,255,.15);display:grid;place-items:center;font-size:12px;backdrop-filter:blur(20px);
+}
+
+.reel-rail{
+  position:absolute;right:14px;bottom:30px;display:flex;flex-direction:column;gap:18px;align-items:center;z-index:6;
+}
+.rail-btn{display:flex;flex-direction:column;align-items:center;gap:4px;background:transparent;border:none;color:#fff}
+.rail-btn .b{
+  width:52px;height:52px;border-radius:50%;background:rgba(255,255,255,.12);
+  display:grid;place-items:center;font-size:28px;backdrop-filter:blur(20px);
+}
+.rail-btn .b.heart{background:rgba(0,0,0,.3);font-size:30px}
+.rail-btn .cnt{font-size:12px;font-weight:800;text-shadow:0 1px 3px rgba(0,0,0,.5);white-space:nowrap}
+
+.reel-progress{
+  position:absolute;left:20px;right:20px;top:96px;height:3px;background:rgba(255,255,255,.2);border-radius:2px;z-index:5;
+}
+.reel-progress .fill{width:40%;height:100%;background:#fff;border-radius:2px}
+
+/* peek next reel */
+.reel-next{
+  position:absolute;left:0;right:0;bottom:-40px;height:80px;background:linear-gradient(180deg,#1B1F26 0%,#000 100%);
+  z-index:3;display:flex;align-items:flex-start;padding:14px 20px;color:rgba(255,255,255,.55);font-size:12px;font-weight:700;
+}
+
+/* ========================================================
+   SCREEN 3: + (Create)
+   ======================================================== */
+.s-create{flex:1;background:#000;position:relative;overflow:hidden;color:#fff;display:flex;flex-direction:column}
+.create-cam{position:absolute;inset:0;
+  background:
+    radial-gradient(40% 30% at 50% 40%, #FFE8C9 0%, #C99771 50%, #4D2D1A 100%);
+}
+.create-cam .me{
+  position:absolute;inset:0;
+  background-image:url('assets/grandpa-normal-small.png');
+  background-size:cover;background-position:center 12%;
+}
+.create-cam .me .stache{position:absolute;top:62%;left:50%;transform:translateX(-50%);font-size:64px;filter:drop-shadow(0 4px 8px rgba(0,0,0,.4))}
+.create-cam .grid-guide{position:absolute;inset:0;background:
+  linear-gradient(to right, transparent 33%, rgba(255,255,255,.08) 33%, rgba(255,255,255,.08) 33.3%, transparent 33.3%),
+  linear-gradient(to right, transparent 66%, rgba(255,255,255,.08) 66%, rgba(255,255,255,.08) 66.3%, transparent 66.3%),
+  linear-gradient(to bottom, transparent 33%, rgba(255,255,255,.08) 33%, rgba(255,255,255,.08) 33.3%, transparent 33.3%),
+  linear-gradient(to bottom, transparent 66%, rgba(255,255,255,.08) 66%, rgba(255,255,255,.08) 66.3%, transparent 66.3%);
+  pointer-events:none;
+}
+
+.create-top{position:absolute;top:50px;left:0;right:0;padding:0 16px;display:flex;align-items:center;justify-content:space-between;z-index:5}
+.create-top .close{
+  width:40px;height:40px;border-radius:50%;background:rgba(0,0,0,.4);display:grid;place-items:center;font-size:18px;backdrop-filter:blur(20px);
+}
+.create-top .music-bar{
+  background:rgba(0,0,0,.4);backdrop-filter:blur(20px);border-radius:999px;padding:8px 14px;
+  display:flex;align-items:center;gap:8px;font-size:13px;font-weight:800;white-space:nowrap;
+}
+.create-top .music-bar .ico{font-size:14px}
+.create-top .flip{width:40px;height:40px;border-radius:50%;background:rgba(0,0,0,.4);display:grid;place-items:center;font-size:20px;backdrop-filter:blur(20px)}
+
+/* right side tools (TikTok style) */
+.create-tools{position:absolute;right:12px;top:120px;display:flex;flex-direction:column;gap:14px;z-index:5}
+.tool{display:flex;flex-direction:column;align-items:center;gap:4px;background:transparent;border:none;color:#fff}
+.tool .b{width:48px;height:48px;border-radius:50%;background:rgba(0,0,0,.4);display:grid;place-items:center;font-size:22px;backdrop-filter:blur(20px)}
+.tool .nm{font-size:11px;font-weight:800;text-shadow:0 1px 3px rgba(0,0,0,.5);white-space:nowrap}
+
+/* timer chips */
+.create-timers{position:absolute;left:20px;top:120px;display:flex;flex-direction:column;gap:8px;z-index:5}
+.timer-chip{
+  background:rgba(0,0,0,.5);backdrop-filter:blur(20px);color:#fff;border-radius:12px;padding:8px 12px;
+  font-size:13px;font-weight:800;display:flex;align-items:center;gap:6px;white-space:nowrap;
+}
+.timer-chip.on{background:#fff;color:#000}
+
+/* Filter strip */
+.create-filters{
+  position:absolute;left:0;right:0;bottom:180px;z-index:5;padding:0 16px;
+}
+.create-filters-row{display:flex;gap:8px;overflow-x:auto;padding-bottom:8px}
+.create-filters-row::-webkit-scrollbar{display:none}
+.cf-item{
+  flex:0 0 auto;display:flex;flex-direction:column;align-items:center;gap:5px;
+}
+.cf-item .thumb{
+  width:62px;height:62px;border-radius:16px;display:grid;place-items:center;font-size:30px;
+  background:rgba(255,255,255,.12);border:2px solid rgba(255,255,255,.2);backdrop-filter:blur(20px);
+  position:relative;
+}
+.cf-item.on .thumb{border-color:#fff;box-shadow:0 0 0 3px var(--hot)}
+.cf-item .thumb .mini{position:absolute;font-size:18px}
+.cf-item .nm{font-size:12px;font-weight:800;color:#fff;text-shadow:0 1px 3px rgba(0,0,0,.6);white-space:nowrap}
+
+/* Big record button */
+.create-record-area{
+  position:absolute;left:0;right:0;bottom:80px;z-index:6;display:flex;flex-direction:column;align-items:center;gap:14px;
+}
+.create-mode-tabs{display:flex;gap:18px;color:rgba(255,255,255,.6);font-size:13px;font-weight:800;white-space:nowrap}
+.create-mode-tabs .on{color:#fff;font-weight:900}
+.record-btn{
+  width:96px;height:96px;border-radius:50%;background:transparent;border:5px solid #fff;
+  display:grid;place-items:center;cursor:pointer;
+}
+.record-btn .inner{
+  width:74px;height:74px;border-radius:50%;background:var(--hot);
+  box-shadow:0 0 0 0 rgba(254,44,85,.6);
+  animation:pulseRec 1.6s ease-in-out infinite;
+}
+@keyframes pulseRec{
+  0%,100%{box-shadow:0 0 0 0 rgba(254,44,85,.6)}
+  50%{box-shadow:0 0 0 12px rgba(254,44,85,0)}
+}
+
+.create-bottom-helper{
+  position:absolute;left:20px;right:20px;bottom:18px;background:rgba(0,0,0,.45);backdrop-filter:blur(20px);
+  border-radius:14px;padding:10px 12px;display:flex;align-items:center;gap:10px;color:#fff;font-size:13px;font-weight:700;z-index:6;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+.create-bottom-helper .emoji{font-size:18px}
+
+/* ----- Create — 미니멀 (얼굴 + 녹화 버튼만) ----- */
+.create-close{
+  position:absolute;top:18px;left:14px;z-index:5;
+  width:42px;height:42px;border-radius:50%;
+  background:rgba(0,0,0,.45);backdrop-filter:blur(20px);
+  border:none;color:#fff;font-size:18px;font-weight:800;
+  display:grid;place-items:center;cursor:pointer;
+}
+.create-simple{
+  position:absolute;left:0;right:0;bottom:36px;z-index:6;
+  display:flex;flex-direction:column;align-items:center;gap:18px;
+}
+.create-label{
+  background:rgba(0,0,0,.45);backdrop-filter:blur(20px);
+  color:#fff;font-size:15px;font-weight:800;text-align:center;line-height:1.35;
+  padding:11px 18px;border-radius:14px;letter-spacing:-.01em;white-space:nowrap;
+}
+.record-btn-big{
+  width:120px;height:120px;border-radius:50%;background:transparent;
+  border:7px solid #fff;cursor:pointer;
+  display:grid;place-items:center;padding:0;
+  box-shadow:0 12px 32px rgba(0,0,0,.5);
+}
+.record-btn-big .inner{
+  width:96px;height:96px;border-radius:50%;background:var(--hot);
+  transition:all .2s ease;
+  box-shadow:0 0 0 0 rgba(254,44,85,.6);
+  animation:pulseRec 1.6s ease-in-out infinite;
+}
+.record-btn-big.recording .inner{
+  width:50px;height:50px;border-radius:14px;animation:none;
+}
+
+/* ========================================================
+   SCREEN 4: 대화기록 (Toss style)
+   ======================================================== */
+.s-history{flex:1;background:var(--bg);display:flex;flex-direction:column;overflow:hidden}
+.s-history-top{padding:8px 24px 0;display:flex;align-items:center;justify-content:space-between;flex:0 0 auto}
+.s-history-top h3{margin:0;font-size:22px;font-weight:800;letter-spacing:-.02em;white-space:nowrap}
+.s-history-top .ico{width:42px;height:42px;border-radius:14px;background:var(--surface);border:1.5px solid var(--line);display:grid;place-items:center;font-size:20px}
+.s-history-scroll{flex:1;overflow:auto;padding:14px 20px 20px;display:flex;flex-direction:column;gap:14px}
+
+.weekly-card{
+  background:linear-gradient(140deg,#FFFFFF 0%,#FFF7E8 100%);
+  border:1.5px solid var(--line);border-radius:20px;padding:18px;
+}
+.weekly-card .row{display:grid;grid-template-columns:1fr 1fr;align-items:flex-end;gap:12px}
+.weekly-card .label{font-size:13px;color:var(--ink-3);font-weight:700;white-space:nowrap}
+.weekly-card .big{font-size:30px;font-weight:900;letter-spacing:-.02em;margin-top:4px;white-space:nowrap}
+.weekly-card .big .unit{font-size:16px;font-weight:700;color:var(--ink-3);margin-left:4px}
+.weekly-card .delta{font-size:12px;color:var(--brand-deep);font-weight:800;white-space:nowrap;margin-top:2px}
+.weekly-card .bars{margin-top:14px;display:flex;align-items:flex-end;gap:5px;height:42px}
+.weekly-card .bars b{
+  flex:1;background:linear-gradient(180deg,#FFD56B,var(--brand));border-radius:4px;
+  display:block;
+}
+
+.section-label{font-size:13px;color:var(--ink-3);font-weight:800;letter-spacing:.04em;margin-top:8px;white-space:nowrap}
+
+.history-item{
+  background:var(--surface);border:1.5px solid var(--line);border-radius:20px;padding:16px;
+  display:flex;gap:14px;align-items:flex-start;
+}
+.history-item .av{
+  width:56px;height:56px;border-radius:50%;flex:0 0 auto;
+  border:2.5px solid #fff;box-shadow:0 0 0 1.5px var(--line);
+  background-size:cover;background-position:center 20%;
+}
+.history-item .body{flex:1;min-width:0}
+.history-item .r1{display:flex;align-items:center;gap:6px}
+.history-item .r1 .nm{font-size:17px;font-weight:800;letter-spacing:-.01em;white-space:nowrap}
+.history-item .r1 .age{font-size:13px;color:var(--ink-3);font-weight:700;white-space:nowrap}
+.history-item .r1 .time{margin-left:auto;font-size:12px;color:var(--ink-3);font-weight:700;white-space:nowrap}
+.history-item .r2{margin-top:6px;display:flex;flex-wrap:wrap;align-items:center;gap:6px}
+.tag-ai{
+  background:linear-gradient(135deg,var(--blue-soft),#F0E6FE);color:var(--blue);
+  font-size:11px;font-weight:800;padding:4px 8px;border-radius:6px;
+  display:inline-flex;align-items:center;gap:4px;white-space:nowrap;
+}
+.tag-topic{background:#FFF3DC;color:#9B6A00;font-size:11px;font-weight:800;padding:4px 8px;border-radius:6px;white-space:nowrap}
+.tag-time{background:var(--bg-2);color:var(--ink-2);font-size:11px;font-weight:800;padding:4px 8px;border-radius:6px;white-space:nowrap}
+.tag-heat{background:var(--brand-soft);color:var(--brand-deep);font-size:11px;font-weight:800;padding:4px 8px;border-radius:6px;white-space:nowrap}
+.history-item .summary{
+  margin-top:10px;font-size:14px;color:var(--ink-2);font-weight:500;line-height:1.5;
+  background:var(--bg);padding:10px 12px;border-radius:12px;
+}
+.history-item .actions{margin-top:10px;display:flex;gap:8px}
+.history-item .actions button{
+  flex:1;background:var(--bg-2);border:none;border-radius:12px;padding:11px 0;
+  font-size:13px;font-weight:800;color:var(--ink);white-space:nowrap;
+}
+.history-item .actions button.primary{background:var(--ink);color:#fff}
+
+/* ========================================================
+   SCREEN 5: 친구 (Toss style)
+   ======================================================== */
+.s-friends{flex:1;background:var(--bg);display:flex;flex-direction:column;overflow:hidden}
+.s-friends-top{padding:8px 24px 0;display:flex;align-items:center;justify-content:space-between;flex:0 0 auto}
+.s-friends-top h3{margin:0;font-size:22px;font-weight:800;letter-spacing:-.02em;white-space:nowrap}
+.s-friends-top h3 small{display:block;font-size:13px;color:var(--ink-3);font-weight:600;margin-top:2px;white-space:nowrap}
+.add-friend{
+  background:var(--ink);color:#fff;border:none;border-radius:14px;padding:10px 14px;
+  font-size:13px;font-weight:800;white-space:nowrap;display:flex;align-items:center;gap:4px;
+}
+.s-friends-scroll{flex:1;overflow:auto;padding:12px 20px 20px;display:flex;flex-direction:column;gap:12px}
+.search-box{
+  background:var(--surface);border:1.5px solid var(--line);border-radius:14px;padding:12px 14px;
+  display:flex;align-items:center;gap:10px;
+}
+.search-box .ico{font-size:18px;color:var(--ink-3)}
+.search-box input{flex:1;border:none;outline:none;font-size:15px;font-weight:600;background:transparent;color:var(--ink-2);min-width:0}
+
+.invite-card{
+  background:linear-gradient(135deg,#E8F2FE,#F0E6FE);border-radius:20px;padding:16px;
+  display:flex;align-items:center;gap:12px;border:1.5px solid #DDE6F5;
+}
+.invite-card .ico{
+  width:46px;height:46px;border-radius:14px;background:var(--blue);color:#fff;
+  display:grid;place-items:center;font-size:22px;flex:0 0 auto;
+}
+.invite-card .txt{flex:1;min-width:0}
+.invite-card .t1{font-size:15px;font-weight:800;letter-spacing:-.01em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.invite-card .t2{font-size:12px;color:var(--ink-2);margin-top:2px;font-weight:600;line-height:1.4}
+.invite-card .go{font-size:20px;color:var(--ink-3);flex:0 0 auto}
+
+.online-row{display:flex;gap:12px;overflow-x:auto;padding:4px 0 6px;margin:0 -20px;padding-left:20px;padding-right:20px}
+.online-row::-webkit-scrollbar{display:none}
+.online-item{flex:0 0 64px;display:flex;flex-direction:column;align-items:center;gap:6px}
+.online-item .av{
+  width:60px;height:60px;border-radius:50%;display:grid;place-items:center;font-size:28px;
+  position:relative;border:3px solid var(--brand);padding:2px;background:#fff;
+}
+.online-item .av .inner{
+  width:100%;height:100%;border-radius:50%;
+  background-size:cover;background-position:center 20%;background-color:var(--peach);
+}
+.online-item .av .live{
+  position:absolute;right:-2px;bottom:-2px;width:18px;height:18px;border-radius:50%;
+  background:var(--brand);border:2.5px solid #fff;
+}
+.online-item .nm{font-size:11px;font-weight:700;text-align:center;line-height:1.2;color:var(--ink-2);white-space:nowrap;max-width:64px;overflow:hidden;text-overflow:ellipsis}
+
+.friend-card{
+  background:var(--surface);border-radius:18px;padding:14px;
+  display:flex;gap:12px;align-items:center;border:1.5px solid var(--line);
+}
+.friend-card .av{
+  width:54px;height:54px;border-radius:50%;flex:0 0 auto;position:relative;
+  background-size:cover;background-position:center 20%;
+}
+.friend-card .av .dot{
+  position:absolute;right:-1px;bottom:-1px;width:14px;height:14px;border-radius:50%;border:2.5px solid #fff;
+}
+.friend-card .av .dot.on{background:var(--brand)}
+.friend-card .av .dot.away{background:var(--warn)}
+.friend-card .av .dot.off{background:var(--ink-4)}
+.friend-card .info{flex:1;min-width:0}
+.friend-card .nm{
+  font-size:16px;font-weight:800;letter-spacing:-.01em;
+  display:flex;align-items:center;gap:6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+.friend-card .nm .age{font-size:13px;color:var(--ink-3);font-weight:700}
+.friend-card .nm .ai-pill{background:var(--blue-soft);color:var(--blue);font-size:10px;font-weight:800;padding:2px 6px;border-radius:5px;white-space:nowrap}
+.friend-card .st{font-size:13px;color:var(--ink-3);font-weight:600;margin-top:3px;display:flex;align-items:center;gap:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.friend-card .st.online{color:var(--brand-deep);font-weight:800}
+.friend-card .call{
+  background:var(--brand);color:#fff;border:none;border-radius:14px;padding:11px 16px;
+  font-size:14px;font-weight:900;display:flex;align-items:center;gap:5px;flex:0 0 auto;white-space:nowrap;
+  box-shadow:0 4px 0 -1px var(--brand-deep);
+}
+.friend-card .call.off{background:var(--bg-2);color:var(--ink-3);box-shadow:none}
+
+/* ============== INDICATORS ============== */
+.annotation{position:absolute;display:flex;align-items:center;gap:10px;font-size:13px;font-weight:700;color:var(--ink-2)}
+.annotation .line{height:1.5px;background:var(--line-strong);flex:1;min-width:60px}
+.annotation .dot{width:12px;height:12px;border-radius:50%;background:#fff;border:2.5px solid var(--brand)}
+
+/* ============== SHOWCASE GRID ============== */
+.showcase{margin-top:80px}
+.showcase-head{display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:32px}
+.showcase-head h3{margin:0;font-size:36px;font-weight:900;letter-spacing:-.03em}
+.showcase-head p{margin:8px 0 0;font-size:16px;color:var(--ink-2);font-weight:500;max-width:600px;line-height:1.55}
+
+.showcase-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:32px}
+.sc-cell{display:flex;flex-direction:column;gap:14px}
+.sc-cell .label{display:flex;align-items:center;gap:10px}
+.sc-cell .num{
+  width:36px;height:36px;border-radius:10px;background:var(--ink);color:#fff;
+  display:grid;place-items:center;font-size:14px;font-weight:900;letter-spacing:-.01em;
+}
+.sc-cell .tit{font-size:18px;font-weight:800;letter-spacing:-.01em;line-height:1.2}
+.sc-cell .tit small{display:block;font-size:12px;color:var(--ink-3);font-weight:700;letter-spacing:.06em;margin-bottom:2px;text-transform:uppercase}
+.sc-cell .desc{font-size:14px;color:var(--ink-2);line-height:1.55;font-weight:500;background:var(--surface);border:1.5px solid var(--line);border-radius:16px;padding:14px}
+.sc-cell .desc b{color:var(--ink);font-weight:800}
+
+/* mini phone for showcase */
+.mini-phone{
+  width:100%;aspect-ratio: 412/870;background:linear-gradient(180deg,#0d0d0e,#1a1a1c);
+  border-radius:36px;padding:9px;position:relative;
+  box-shadow:0 30px 50px -30px rgba(20,30,50,.4);
+}
+.mini-phone::before{
+  content:"";position:absolute;left:50%;top:12px;transform:translateX(-50%);
+  width:76px;height:22px;background:#000;border-radius:12px;z-index:30;
+}
+.mini-phone .screen{border-radius:28px}
+/* mini phones inherit same screen styles but scaled visually via container */
+
+/* tweaks: scale .mini-phone smaller content via transform if needed; we just reuse */
+.mini-phone .statusbar{height:32px;padding:0 18px;font-size:10px}
+.mini-phone .statusbar .bat{width:16px;height:8px}
+.mini-phone .s-home-top, .mini-phone .s-history-top, .mini-phone .s-friends-top{padding:4px 16px 0}
+.mini-phone .s-home-top .greet, .mini-phone .s-history-top h3, .mini-phone .s-friends-top h3{font-size:14px}
+.mini-phone .s-home-top .greet small{font-size:9px;margin-top:1px}
+.mini-phone .s-home-scroll{padding:8px 14px 8px;gap:8px}
+.mini-phone .online-card{padding:11px 13px;border-radius:14px}
+.mini-phone .online-card .l .big{font-size:18px}
+.mini-phone .online-card .l .label{font-size:9px}
+.mini-phone .online-card .r .av{width:22px;height:22px;font-size:12px;margin-left:-6px;border-width:1.5px}
+.mini-phone .s-home-title{font-size:14px}
+.mini-phone .s-home-title small{font-size:10px}
+.mini-phone .match-hero{padding:14px 12px 12px;border-radius:16px;gap:8px}
+.mini-phone .match-cta{width:120px;height:120px;border-width:4px}
+.mini-phone .match-cta .ico{font-size:32px}
+.mini-phone .match-cta .lbl{font-size:14px}
+.mini-phone .match-hero .hint{font-size:10px}
+.mini-phone .chip{padding:5px 9px;font-size:9px}
+.mini-phone .recent-card{flex-basis:84px;padding:8px 6px;gap:5px;border-radius:12px}
+.mini-phone .recent-card .av{width:38px;height:38px;font-size:19px;border-width:2px}
+.mini-phone .recent-card .nm{font-size:10px}
+.mini-phone .recent-card .meta{font-size:8px}
+.mini-phone .recent-card .call-btn{padding:3px 6px;font-size:8px;border-radius:6px}
+.mini-phone .tabbar{padding:5px 4px 18px}
+.mini-phone .tab{font-size:8px}
+.mini-phone .tab .ico{font-size:14px}
+.mini-phone .tab-plus .btn{width:38px;height:28px;font-size:18px;border-radius:9px}
+
+/* status colors in mini */
+.mini-phone .incall-top{top:32px;left:10px;right:10px;gap:5px}
+.mini-phone .incall-topic{padding:6px 9px;border-radius:10px}
+.mini-phone .incall-topic .tag{font-size:7px;padding:2px 4px}
+.mini-phone .incall-topic .q{font-size:9px}
+.mini-phone .incall-timer{padding:5px 8px;font-size:9px;border-radius:8px}
+.mini-phone .gma-face{width:140px;height:170px}
+.mini-phone .gma-base{font-size:100px}
+.mini-phone .filter-overlay.nose{top:74px;font-size:34px}
+.mini-phone .filter-overlay.lips{top:94px;font-size:24px}
+.mini-phone .filter-overlay.sparkle{top:38px;right:20px;font-size:20px}
+.mini-phone .filter-overlay.heart{top:38px;left:15px;font-size:18px}
+.mini-phone .incall-pip{width:60px;height:80px;right:10px;top:74px;border-radius:11px;border-width:2px}
+.mini-phone .incall-pip .pip-face .base{font-size:48px}
+.mini-phone .incall-pip .pip-face .glasses{top:11px;font-size:20px}
+.mini-phone .incall-pip .pip-label{font-size:7px;left:4px;bottom:4px;padding:1px 4px}
+.mini-phone .incall-name{bottom:130px;padding:5px 9px;font-size:10px}
+.mini-phone .incall-name .nm{font-size:10px}
+.mini-phone .incall-name .age{font-size:9px}
+.mini-phone .incall-filters{bottom:86px;padding:8px 10px;gap:6px}
+.mini-phone .f-item{width:42px;gap:4px}
+.mini-phone .f-item .ico{width:38px;height:38px;font-size:18px}
+.mini-phone .f-item .nm{font-size:8px}
+.mini-phone .incall-dock{padding:10px 10px 14px}
+.mini-phone .dock-btn{font-size:8px;gap:3px}
+.mini-phone .dock-btn .b{width:36px;height:36px;font-size:16px;border-width:1.5px}
+
+.mini-phone .reel-top{top:32px;gap:14px}
+.mini-phone .reel-tab{font-size:10px}
+
+/* New components — senior swipe deck (mini) */
+.mini-phone .reel-subtabs{top:36px;gap:18px}
+.mini-phone .reel-subtab{font-size:11px;padding:4px 3px}
+.mini-phone .reel-subtab.active::after{bottom:-4px;height:2px}
+.mini-phone .today-header{padding:60px 14px 4px}
+.mini-phone .today-header .big{font-size:14px}
+.mini-phone .today-header .sub{font-size:10px;margin-top:3px}
+.mini-phone .swipe-stage{margin:8px 14px 0}
+.mini-phone .senior-card{border-radius:16px;box-shadow:0 14px 24px -8px rgba(0,0,0,.65)}
+.mini-phone .senior-card .live-badge{top:10px;right:10px;padding:4px 8px;font-size:8px;border-radius:6px}
+.mini-phone .senior-card .info{left:14px;right:14px;bottom:18px}
+.mini-phone .senior-card .info .nm{font-size:19px;gap:6px}
+.mini-phone .senior-card .info .nm .age{font-size:13px}
+.mini-phone .senior-card .info .loc{font-size:9px;margin-top:3px}
+.mini-phone .senior-card .info .line{font-size:11px;margin-top:6px;line-height:1.3}
+.mini-phone .senior-card.behind{transform:scale(.94) translateY(10px)}
+.mini-phone .swipe-actions{padding:10px 14px 4px;gap:12px}
+.mini-phone .swipe-actions .pass{padding:9px 14px;font-size:10px;gap:5px}
+.mini-phone .swipe-actions .pass .x{font-size:11px}
+.mini-phone .swipe-actions .like{padding:9px 16px;font-size:11px}
+.mini-phone .swipe-hint{font-size:9px;gap:8px;padding-bottom:8px}
+
+/* New components — minimal create (mini) */
+.mini-phone .create-close{top:12px;left:10px;width:28px;height:28px;font-size:12px}
+.mini-phone .create-simple{bottom:22px;gap:10px}
+.mini-phone .create-label{font-size:10px;padding:6px 11px;border-radius:9px}
+.mini-phone .record-btn-big{width:74px;height:74px;border-width:4px}
+.mini-phone .record-btn-big .inner{width:58px;height:58px}
+
+.mini-phone .reel-search{top:34px;right:14px;font-size:14px}
+.mini-phone .reel-figure .person{font-size:120px}
+.mini-phone .reel-figure .deco{font-size:24px}
+.mini-phone .reel-bottom{right:54px;padding:0 13px;bottom:12px}
+.mini-phone .reel-creator .av{width:30px;height:30px;font-size:16px;border-width:1.5px}
+.mini-phone .reel-creator .info .name{font-size:11px}
+.mini-phone .reel-creator .info .tag{font-size:9px}
+.mini-phone .reel-creator .follow{padding:4px 9px;font-size:9px;border-radius:5px}
+.mini-phone .reel-caption{font-size:10px;margin-top:8px}
+.mini-phone .reel-music{font-size:9px;margin-top:6px;gap:5px}
+.mini-phone .reel-music .ico{width:16px;height:16px;font-size:8px}
+.mini-phone .reel-rail{right:9px;bottom:22px;gap:11px}
+.mini-phone .reel-rail .b{width:34px;height:34px;font-size:18px}
+.mini-phone .rail-btn .cnt{font-size:9px}
+.mini-phone .reel-progress{top:64px;left:14px;right:14px;height:2px}
+
+.mini-phone .create-cam .me .face{font-size:110px}
+.mini-phone .create-cam .me .stache{font-size:40px}
+.mini-phone .create-top{top:32px;padding:0 10px}
+.mini-phone .create-top .close{width:28px;height:28px;font-size:12px}
+.mini-phone .create-top .music-bar{padding:5px 9px;font-size:9px}
+.mini-phone .create-top .flip{width:28px;height:28px;font-size:14px}
+.mini-phone .create-tools{right:8px;top:78px;gap:9px}
+.mini-phone .tool .b{width:32px;height:32px;font-size:14px}
+.mini-phone .tool .nm{font-size:8px}
+.mini-phone .create-timers{left:14px;top:78px;gap:5px}
+.mini-phone .timer-chip{padding:5px 8px;font-size:9px;border-radius:8px}
+.mini-phone .create-filters{bottom:124px;padding:0 10px}
+.mini-phone .cf-item .thumb{width:42px;height:42px;font-size:20px;border-radius:11px}
+.mini-phone .cf-item .nm{font-size:8px}
+.mini-phone .create-record-area{bottom:56px;gap:9px}
+.mini-phone .create-mode-tabs{gap:12px;font-size:9px}
+.mini-phone .record-btn{width:66px;height:66px;border-width:3.5px}
+.mini-phone .record-btn .inner{width:50px;height:50px}
+.mini-phone .create-bottom-helper{bottom:14px;left:14px;right:14px;padding:6px 9px;font-size:9px;border-radius:10px}
+.mini-phone .create-bottom-helper .emoji{font-size:13px}
+
+.mini-phone .s-history-scroll{padding:9px 14px 14px;gap:9px}
+.mini-phone .weekly-card{padding:12px;border-radius:14px}
+.mini-phone .weekly-card .big{font-size:20px}
+.mini-phone .weekly-card .big .unit{font-size:11px}
+.mini-phone .weekly-card .label{font-size:9px}
+.mini-phone .weekly-card .delta{font-size:9px}
+.mini-phone .weekly-card .bars{height:28px;gap:3px;margin-top:9px}
+.mini-phone .section-label{font-size:9px}
+.mini-phone .history-item{padding:11px;gap:9px;border-radius:14px}
+.mini-phone .history-item .av{width:38px;height:38px;font-size:20px;border-width:2px}
+.mini-phone .history-item .r1 .nm{font-size:11px}
+.mini-phone .history-item .r1 .age{font-size:9px}
+.mini-phone .history-item .r1 .time{font-size:9px}
+.mini-phone .tag-ai,.mini-phone .tag-topic,.mini-phone .tag-time,.mini-phone .tag-heat{font-size:8px;padding:2px 5px}
+.mini-phone .history-item .summary{font-size:9px;padding:7px 9px;border-radius:8px;margin-top:6px;line-height:1.4}
+.mini-phone .history-item .actions{gap:5px;margin-top:7px}
+.mini-phone .history-item .actions button{padding:7px 0;font-size:9px;border-radius:8px}
+
+.mini-phone .s-friends-scroll{padding:9px 14px 14px;gap:9px}
+.mini-phone .search-box{padding:8px 10px;border-radius:11px;gap:6px}
+.mini-phone .search-box .ico{font-size:12px}
+.mini-phone .search-box input{font-size:10px}
+.mini-phone .add-friend{padding:6px 10px;font-size:9px;border-radius:9px}
+.mini-phone .invite-card{padding:11px;gap:9px;border-radius:14px}
+.mini-phone .invite-card .ico{width:32px;height:32px;font-size:15px;border-radius:9px}
+.mini-phone .invite-card .t1{font-size:11px}
+.mini-phone .invite-card .t2{font-size:9px}
+.mini-phone .invite-card .go{font-size:14px}
+.mini-phone .online-row{gap:8px;padding-left:14px;padding-right:14px;margin:0 -14px}
+.mini-phone .online-item{flex-basis:42px;gap:4px}
+.mini-phone .online-item .av{width:42px;height:42px;font-size:20px;border-width:2px;padding:1px}
+.mini-phone .online-item .av .live{width:12px;height:12px;border-width:2px}
+.mini-phone .online-item .nm{font-size:8px;max-width:44px}
+.mini-phone .friend-card{padding:9px;gap:9px;border-radius:13px}
+.mini-phone .friend-card .av{width:38px;height:38px;font-size:20px}
+.mini-phone .friend-card .av .dot{width:10px;height:10px;border-width:2px}
+.mini-phone .friend-card .nm{font-size:11px;gap:4px}
+.mini-phone .friend-card .nm .age{font-size:9px}
+.mini-phone .friend-card .nm .ai-pill{font-size:7px;padding:1px 4px}
+.mini-phone .friend-card .st{font-size:9px}
+.mini-phone .friend-card .call{padding:7px 10px;font-size:10px;border-radius:9px;gap:3px}
+
+/* Showcase phone wrappers */
+.sc-cell .phone-wrap{position:relative;display:flex;justify-content:center}
+
+/* ============== STATE TOGGLE for HOME ============== */
+.home-states{
+  position:absolute;top:50%;
+  right:100%;margin-right:12px;
+  transform:translateY(-50%);
+  display:flex;flex-direction:column;gap:8px;
+  z-index:30;
+}
+.state-btn{
+  background:var(--surface);border:1.5px solid var(--line);border-radius:14px;
+  padding:10px 14px;font-size:12px;font-weight:800;color:var(--ink-2);cursor:pointer;
+  display:flex;align-items:center;gap:6px;white-space:nowrap;box-shadow:var(--shadow);
+}
+.state-btn.active{background:var(--ink);color:#fff;border-color:var(--ink)}
+.state-btn .dot{width:6px;height:6px;border-radius:50%;background:var(--ink-3)}
+.state-btn.active .dot{background:var(--brand)}
+
+/* Footer */
+.footer-cred{
+  margin-top:80px;padding-top:32px;border-top:1.5px dashed var(--line);
+  display:flex;justify-content:space-between;font-size:13px;color:var(--ink-3);font-weight:600;
+}
+
+/* Helper: hide things outside their tab properly */
+.home-sub{display:none;flex:1;flex-direction:column}
+.home-sub.active{display:flex}
+
+</style>
+</head>
+<body>
+<div class="page" data-screen-label="HalmiGo Prototype">
+
+  <!-- ========== TOP BAR ========== -->
+  <div class="topbar">
+    <div class="logo">
+      <div class="mark">할</div>
+      <h1>할미고 <small>HalmiGo · 할마·할버지의 아미고(친구)</small></h1>
+    </div>
+    <div class="meta">
+      <div class="pill"><span class="dot"></span>지금 1,247명 활동 중</div>
+      <div class="pill">📱 iPhone 15 · 393pt</div>
+    </div>
+  </div>
+
+  <!-- ========== HERO ========== -->
+  <div class="hero">
+    <div>
+      <h2><span class="accent">외로움</span>을<br/>즐거움으로.</h2>
+      <p><b>할미고</b>는 할머니·할아버지를 위한 <b>아미고(친구)</b> 공간. 영상으로 따뜻한 친구를 사귀고, AI가 관심사로 연결해주며, 통화 중엔 갑자기 코가 커지고 립스틱이 발려 깔깔깔. ‘오늘의 노인’ 댄스 챌린지로 인플루언서도 발견해보세요.</p>
+    </div>
+    <div class="kpis">
+      <div class="kpi"><div class="k">활동중인 어르신</div><div class="v">1,247<small>명</small></div><div class="sub">평소보다 +18%</div></div>
+      <div class="kpi"><div class="k">오늘 매칭 성공</div><div class="v">3,820<small>회</small></div><div class="sub">평균 19분 대화</div></div>
+      <div class="kpi"><div class="k">‘오늘의 노인’ 좋아요</div><div class="v">82K<small>♥</small></div><div class="sub">@할매스타_영자 1위</div></div>
+    </div>
+  </div>
+
+  <!-- ========================= -->
+  <!-- ====== PROTOTYPE STAGE ==== -->
+  <!-- ========================= -->
+  <div class="stage">
+
+    <!-- LEFT annotations -->
+    <div>
+      <div class="stage-card">
+        <span class="num brand">FEATURE 01 · 매칭</span>
+        <h4>아자르식 즉시 매칭</h4>
+        <p>거대한 녹색 원형 버튼 한 번. AI가 비슷한 연령·관심사를 기반으로 5초 안에 친구를 찾아 연결합니다.</p>
+      </div>
+      <div class="stage-card">
+        <span class="num hot">FEATURE 02 · 깜짝 필터</span>
+        <h4>갑자기 코가 커진다!</h4>
+        <p>통화 중 AI가 랜덤한 순간에 코를 키우고 콧수염을 붙입니다. 사용자가 고르는 게 아니라 갑자기 튀어나오는 깜짝 효과로 어색함이 폭소로.</p>
+      </div>
+      <div class="stage-card">
+        <span class="num warn">FEATURE 03 · 노인 탭</span>
+        <h4>오늘의 노인 · 틴더식 매칭</h4>
+        <p>두 개의 서브탭(오늘의 노인 / 동영상). ‘오늘의 노인’은 랭킹 #1부터 카드 스와이프로 넘기며 영상통화로 바로 연결됩니다.</p>
+      </div>
+    </div>
+
+    <!-- CENTER: interactive phone -->
+    <div class="phone-stage">
+
+      <div class="phone">
+        <!-- State toggle (for home only, hidden otherwise) -->
+        <div class="home-states" id="homeStates">
+          <button class="state-btn active" data-home-state="idle"><span class="dot"></span>홈 · 대기</button>
+          <button class="state-btn" data-home-state="matching"><span class="dot"></span>매칭중</button>
+          <button class="state-btn" data-home-state="incall"><span class="dot"></span>통화중 (필터!)</button>
+        </div>
+        <div class="screen">
+
+          <!-- ============ SCREEN: HOME ============ -->
+          <div class="screen-pane active" data-tab="home">
+
+            <!-- HOME · IDLE -->
+            <div class="home-sub active" data-home-state="idle">
+              <div class="statusbar"><span>9:24</span><span class="right"><span>📶</span><span class="bat"></span></span></div>
+              <div class="app-area">
+                <div class="s-home">
+                  <div class="s-home-top">
+                    <div class="greet"><span class="main">안녕하세요, 만복님 👋</span><small>오늘도 따뜻한 하루 보내세요</small></div>
+                    <div class="bell">🔔</div>
+                  </div>
+                  <div class="s-home-scroll">
+                    <div class="online-card">
+                      <div class="row">
+                        <div class="l">
+                          <div class="label">지금 활동 중인 어르신</div>
+                          <div class="big">1,247<small>명</small></div>
+                        </div>
+                        <div class="r"><div class="stack">
+                          <div class="av">👵🏻</div>
+                          <div class="av">👴🏻</div>
+                          <div class="av">👵🏻</div>
+                        </div></div>
+                      </div>
+                    </div>
+
+                    <div class="s-home-title">친구 찾기<small>비슷한 관심사로 AI가 연결해드려요</small></div>
+
+                    <div class="match-hero">
+                      <button class="match-cta" id="matchBtn">
+                        <span class="pulse"></span>
+                        <span class="pulse"></span>
+                        <span class="ico">📞</span>
+                        <span class="lbl">바로 매칭</span>
+                      </button>
+                      <div class="hint">한 번 눌러 친구를 만나보세요</div>
+                      <div class="filter-chips">
+                        <div class="chip on">✓ 비슷한 연세</div>
+                        <div class="chip on">✓ 취미 일치</div>
+                        <div class="chip">📍 근처 동네</div>
+                      </div>
+                    </div>
+
+                    <div class="recent-row">
+                      <div class="head"><h4>다시 만나고 싶은 친구</h4><a>전체보기</a></div>
+                    </div>
+                    <div class="recent-list">
+                      <div class="recent-card">
+                        <div class="av" style="background-image:url('assets/senior-3.png');background-size:cover;background-position:center 20%"><div class="live"></div></div>
+                        <div class="nm">이순자</div>
+                        <div class="meta">71세 · 어제<br/>💎 보물 이야기</div>
+                        <button class="call-btn">📞 다시 전화</button>
+                      </div>
+                      <div class="recent-card">
+                        <div class="av" style="background-image:url('assets/senior-2.png');background-size:cover;background-position:center 20%"></div>
+                        <div class="nm">박철수</div>
+                        <div class="meta">75세 · 2일 전<br/>🍚 추억의 음식</div>
+                        <button class="call-btn" style="background:var(--bg-2);color:var(--ink-2)">💌 인사하기</button>
+                      </div>
+                      <div class="recent-card">
+                        <div class="av" style="background-image:url('assets/senior-4.png');background-size:cover;background-position:center 20%"><div class="live"></div></div>
+                        <div class="nm">김영자</div>
+                        <div class="meta">73세 · 3일 전<br/>👶 손주 이야기</div>
+                        <button class="call-btn">📞 다시 전화</button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- HOME · MATCHING -->
+            <div class="home-sub" data-home-state="matching">
+              <div class="statusbar"><span>9:24</span><span class="right"><span>📶</span><span class="bat"></span></span></div>
+              <div class="app-area">
+                <div class="s-matching">
+                  <h2>친구를 찾고 있어요</h2>
+                  <div class="sub">비슷한 연세의 다정한 분과<br/>곧 연결해 드릴게요.</div>
+
+                  <div class="match-ring">
+                    <svg viewBox="0 0 240 240">
+                      <circle cx="120" cy="120" r="104" stroke="#F0E0BD" stroke-width="16" fill="none"/>
+                      <circle cx="120" cy="120" r="104" stroke="#16C273" stroke-width="16" fill="none"
+                        stroke-linecap="round"
+                        stroke-dasharray="654" stroke-dashoffset="262"/>
+                    </svg>
+                    <div class="center">
+                      <div class="n">5</div>
+                      <div class="u">초 남음</div>
+                    </div>
+                  </div>
+
+                  <div class="music-now">
+                    <div class="album">🎵</div>
+                    <div class="info">
+                      <div class="title">별빛 같은 나의 사랑아</div>
+                      <div class="artist">임영웅 · 따뜻한 음악과 함께</div>
+                    </div>
+                    <div class="eq"><b></b><b></b><b></b><b></b></div>
+                  </div>
+
+                  <div class="match-dots"><span></span><span></span><span></span></div>
+
+                  <button class="match-cancel">← 다음에 할래요</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- HOME · IN-CALL (with random surprise filter!) -->
+            <div class="home-sub" data-home-state="incall">
+              <div class="statusbar dark"><span>9:31</span><span class="right"><span>📶</span><span class="bat"></span></span></div>
+              <div class="app-area">
+                <div class="s-incall" id="incallScene">
+                  <div class="remote">
+                    <div class="layer normal"></div>
+                    <div class="layer funny"></div>
+                  </div>
+
+                  <!-- Surprise effect indicator -->
+                  <div class="filter-toast">
+                    <span class="emoji">🤡</span>
+                    <span>코가 갑자기 커졌어요!</span>
+                  </div>
+                  <div class="filter-burst">
+                    <span style="left:-90px;top:-30px">✨</span>
+                    <span style="left:80px;top:-20px">💫</span>
+                    <span style="left:-70px;top:50px">⭐</span>
+                    <span style="left:60px;top:60px">✨</span>
+                    <span style="left:0;top:-50px">🎉</span>
+                  </div>
+
+                  <div class="incall-top">
+                    <div class="incall-topic">
+                      <span class="tag">오늘의 주제</span>
+                      <span class="q">내가 가장 아끼는 보물은? 💎</span>
+                    </div>
+                    <div class="incall-timer">07:42</div>
+                  </div>
+
+                  <div class="incall-pip">
+                    <div class="pip-face">
+                      <span class="base">👵🏻</span>
+                      <span class="glasses">🕶️</span>
+                    </div>
+                    <span class="pip-label">나</span>
+                  </div>
+
+                  <div class="incall-name">
+                    <span class="live"></span>
+                    <span class="nm">김만복</span>
+                    <span class="age">· 72세</span>
+                  </div>
+
+                  <div class="incall-dock">
+                    <button class="dock-btn"><div class="b on">🎤</div><span>마이크</span></button>
+                    <button class="dock-btn"><div class="b">📷</div><span>카메라</span></button>
+                    <button class="dock-btn"><div class="b">🎁</div><span>선물</span></button>
+                    <button class="dock-btn"><div class="b end">📞</div><span>끝내기</span></button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- ============ SCREEN: 노인 (오늘의 노인 / 동영상) ============ -->
+          <div class="screen-pane" data-tab="reels">
+            <div class="statusbar dark"><span>9:35</span><span class="right"><span>📶</span><span class="bat"></span></span></div>
+            <div class="app-area">
+              <!-- Sub-tab switcher (overlays both views) -->
+              <div class="reel-subtabs">
+                <button class="reel-subtab active" data-sub="today">오늘의 노인</button>
+                <button class="reel-subtab" data-sub="video">동영상</button>
+              </div>
+
+              <!-- SUB A: 오늘의 노인 (단순 스와이프) -->
+              <div class="reel-sub active" data-sub="today">
+                <div class="s-today" id="todayScene">
+                  <div class="today-header">
+                    <div class="big">오늘의 <span class="gold">노인</span> 🎯</div>
+                    <div class="sub">스와이프 한 번 → 다음 어르신</div>
+                  </div>
+
+                  <div class="swipe-stage">
+                    <!-- behind card (peek) -->
+                    <div class="senior-card behind" id="seniorBehind">
+                      <img class="photo" src="assets/senior-3.png" alt="" />
+                      <div class="shade"></div>
+                    </div>
+                    <!-- top card (interactive) -->
+                    <div class="senior-card" id="seniorTop">
+                      <img class="photo" src="assets/senior-2.png" alt="" />
+                      <div class="shade"></div>
+                      <div class="live-badge"><span class="dot"></span>지금 통화 가능</div>
+                      <div class="stamp like">전화!</div>
+                      <div class="stamp nope">다음~</div>
+                      <div class="info">
+                        <div class="nm"><span id="seniorName">박철수</span> <span class="age" id="seniorAge">75</span></div>
+                        <div class="loc">📍 <span id="seniorLoc">서울 종로구</span></div>
+                        <div class="line" id="seniorLine">"나랑 통화 한 번 어때유? 😎"</div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="swipe-actions">
+                    <button class="pass" id="passBtn"><span class="x">✕</span> 다음 어르신</button>
+                    <button class="like" id="likeBtn">📞 전화 걸기</button>
+                  </div>
+                  <div class="swipe-hint">
+                    <span>← 다음</span><span>→ 전화</span>
+                  </div>
+
+                  <!-- Match popup -->
+                  <div class="match-pop" id="matchPop">
+                    <div class="label">🎉 매칭 성공!</div>
+                    <div class="ttl">서로 좋아해요!</div>
+                    <div class="photo" id="matchPhoto" style="background-image:url('assets/senior-2.png')"></div>
+                    <div class="sub"><b id="matchName">박철수</b>님이 지금 통화를 기다리고 있어요</div>
+                    <button class="call-btn" id="callNowBtn">📞 지금 바로 통화하기</button>
+                    <button class="close" id="closeMatchBtn">나중에</button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- SUB B: Video Reels feed -->
+              <div class="reel-sub" data-sub="video">
+                <div class="s-reels">
+                  <div class="reel-feed">
+                    <div class="reel-card reel-bg-1">
+                      <div class="reel-figure">
+                        <video class="reel-video" src="assets/grandpa-dance.mp4" autoplay loop muted playsinline></video>
+
+                      <!-- Tap to unmute -->
+                      <button class="reel-sound" id="reelSoundBtn" title="소리 켜기">
+                        <span class="ico-mute">🔇</span>
+                        <span class="ico-on">🔊</span>
+                      </button>
+                      </div>
+
+                      <div class="reel-search">🔍</div>
+                      <div class="reel-progress"><div class="fill"></div></div>
+
+                      <div class="reel-rail">
+                        <button class="rail-btn"><div class="b heart">❤️</div><span class="cnt">128.4K</span></button>
+                        <button class="rail-btn"><div class="b">💬</div><span class="cnt">3,820</span></button>
+                        <button class="rail-btn"><div class="b">↗</div><span class="cnt">공유</span></button>
+                        <button class="rail-btn"><div class="b">⭐</div><span class="cnt">저장</span></button>
+                        <div class="rail-btn">
+                          <div class="b" style="background-image:url('assets/grandpa-normal-small.png');background-size:cover;background-position:center 18%;border:2px solid #fff"></div>
+                          <span class="cnt">@만복</span>
+                        </div>
+                      </div>
+
+                      <div class="reel-bottom">
+                        <div class="reel-creator">
+                          <div class="av" style="background-image:url('assets/grandpa-normal-small.png');background-size:cover;background-position:center 18%"></div>
+                          <div class="info">
+                            <div class="name">@회춘성공_만복</div>
+                            <div class="tag">82세 · 서울 종로구</div>
+                          </div>
+                          <button class="follow">팔로우</button>
+                        </div>
+                        <div class="reel-caption">
+                          <b>내 나이 80, 회춘 성공 🕺</b><br/>
+                          손주가 가르쳐준 박자, 이제 내 차례여~<br/>
+                          <span class="hash">#오늘의노인</span> <span class="hash">#회춘챌린지</span> <span class="hash">#할배의리듬</span>
+                        </div>
+                        <div class="reel-music">
+                          <div class="ico">🎵</div>
+                          <span>임영웅 - 별빛 같은 나의 사랑아</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="reel-next">↓ 다음 영상 · @텃밭왕_철수의 호미질 ASMR</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ============ SCREEN: CREATE (+) ============ -->
+          <div class="screen-pane" data-tab="create">
+            <div class="statusbar dark"><span>9:36</span><span class="right"><span>📶</span><span class="bat"></span></span></div>
+            <div class="app-area">
+              <div class="s-create">
+                <div class="create-cam">
+                  <div class="me"></div>
+                </div>
+
+                <!-- Tiny close to exit (only essential chrome) -->
+                <button class="create-close" title="닫기">✕</button>
+
+                <!-- Big simple record button + clear label -->
+                <div class="create-simple">
+                  <div class="create-label">크게 한 번 눌러서<br/>영상을 찍어요</div>
+                  <button class="record-btn-big" id="recordBtn"><span class="inner"></span></button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ============ SCREEN: HISTORY ============ -->
+          <div class="screen-pane" data-tab="history">
+            <div class="statusbar"><span>10:12</span><span class="right"><span>📶</span><span class="bat"></span></span></div>
+            <div class="app-area">
+              <div class="s-history">
+                <div class="s-history-top">
+                  <h3>대화기록</h3>
+                  <div class="ico">📅</div>
+                </div>
+                <div class="s-history-scroll">
+
+                  <div class="weekly-card">
+                    <div class="row">
+                      <div>
+                        <div class="label">이번 주 대화</div>
+                        <div class="big">12<span class="unit">회</span></div>
+                      </div>
+                      <div style="text-align:right">
+                        <div class="label">마음 온도</div>
+                        <div class="big" style="color:var(--brand-deep)">+4.5<span class="unit">°</span></div>
+                        <div class="delta">↑ 지난주보다 1.8° 상승</div>
+                      </div>
+                    </div>
+                    <div class="bars">
+                      <b style="height:30%"></b><b style="height:55%"></b><b style="height:40%"></b>
+                      <b style="height:75%"></b><b style="height:90%"></b><b style="height:60%"></b><b style="height:85%"></b>
+                    </div>
+                  </div>
+
+                  <div class="section-label">오늘 · TUE</div>
+
+                  <div class="history-item">
+                    <div class="av" style="background-image:url('assets/senior-3.png')"></div>
+                    <div class="body">
+                      <div class="r1"><span class="nm">이순자</span><span class="age">· 71세</span><span class="time">오전 9:30</span></div>
+                      <div class="r2">
+                        <span class="tag-ai">🤖 관심사 일치</span>
+                        <span class="tag-topic">💎 보물 이야기</span>
+                        <span class="tag-time">20분 12초</span>
+                        <span class="tag-heat">🔥 +1.0°</span>
+                      </div>
+                      <div class="summary">한옥 마당에서 키우시는 매화 이야기로 한참 웃었어요. <b>“보물은 사람이더라”</b>는 마무리가 짠~</div>
+                      <div class="actions">
+                        <button>💌 인사 보내기</button>
+                        <button class="primary">➕ 친구 추가</button>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="section-label">어제 · MON</div>
+
+                  <div class="history-item">
+                    <div class="av" style="background-image:url('assets/senior-2.png')"></div>
+                    <div class="body">
+                      <div class="r1"><span class="nm">박철수</span><span class="age">· 75세</span><span class="time">오후 3:14</span></div>
+                      <div class="r2">
+                        <span class="tag-topic">🍚 추억의 음식</span>
+                        <span class="tag-time">18분 04초</span>
+                        <span class="tag-heat">🔥 +0.8°</span>
+                      </div>
+                      <div class="summary">어머니 된장찌개 → 시장 골목 → <b>다음엔 시장 사진 보여드리기로 약속.</b></div>
+                    </div>
+                  </div>
+
+                  <div class="history-item">
+                    <div class="av" style="background-image:url('assets/senior-4.png')"></div>
+                    <div class="body">
+                      <div class="r1"><span class="nm">김영자</span><span class="age">· 73세</span><span class="time">오전 11:02</span></div>
+                      <div class="r2">
+                        <span class="tag-ai">🤖 관심사 일치</span>
+                        <span class="tag-topic">👶 손주 이야기</span>
+                        <span class="tag-time">25분 33초</span>
+                      </div>
+                      <div class="summary">손주 자랑 배틀… 25분 풀로 웃으셨어요. <b>“오늘 운동 안 해도 되겠다”</b></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ============ SCREEN: FRIENDS ============ -->
+          <div class="screen-pane" data-tab="friends">
+            <div class="statusbar"><span>10:14</span><span class="right"><span>📶</span><span class="bat"></span></span></div>
+            <div class="app-area">
+              <div class="s-friends">
+                <div class="s-friends-top">
+                  <h3>내 친구<small>소중한 사람들</small></h3>
+                  <button class="add-friend">➕ 친구 추가</button>
+                </div>
+                <div class="s-friends-scroll">
+                  <div class="search-box">
+                    <span class="ico">🔍</span>
+                    <input placeholder="이름으로 찾아보세요" />
+                  </div>
+
+                  <div class="invite-card">
+                    <div class="ico">📲</div>
+                    <div class="txt">
+                      <div class="t1">전화번호로 친구 초대하기</div>
+                      <div class="t2">자녀분이나 친구에게 할미고를 소개해주세요</div>
+                    </div>
+                    <div class="go">›</div>
+                  </div>
+
+                  <div class="section-label">내 친구</div>
+
+                  <div class="friend-card">
+                    <div class="av" style="background-image:url('assets/senior-3.png')"><div class="dot on"></div></div>
+                    <div class="info">
+                      <div class="nm">이순자 <span class="age">71세</span> <span class="ai-pill">🤖 잘 맞음</span></div>
+                      <div class="st online">● 지금 통화 가능 · 광주</div>
+                    </div>
+                    <button class="call">📞 전화</button>
+                  </div>
+
+                  <div class="friend-card">
+                    <div class="av" style="background-image:url('assets/senior-2.png')"><div class="dot on"></div></div>
+                    <div class="info">
+                      <div class="nm">박철수 <span class="age">75세</span></div>
+                      <div class="st online">● 지금 활동 중 · 서울</div>
+                    </div>
+                    <button class="call">📞 전화</button>
+                  </div>
+
+                  <div class="friend-card">
+                    <div class="av" style="background-image:url('assets/senior-4.png')"><div class="dot away"></div></div>
+                    <div class="info">
+                      <div class="nm">김영자 <span class="age">73세</span> <span class="ai-pill">🤖 잘 맞음</span></div>
+                      <div class="st">자리 비움 · 10분 전</div>
+                    </div>
+                    <button class="call off">📞 전화</button>
+                  </div>
+
+                  <div class="friend-card">
+                    <div class="av" style="background-image:url('assets/senior-5.png')"><div class="dot off"></div></div>
+                    <div class="info">
+                      <div class="nm">최영자 <span class="age">78세</span></div>
+                      <div class="st">마지막 접속 · 어제</div>
+                    </div>
+                    <button class="call off">📞 전화</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ============ TAB BAR ============ -->
+          <nav class="tabbar">
+            <button class="tab active" data-tab-btn="home"><span class="ico">🏠</span><span>홈</span></button>
+            <button class="tab" data-tab-btn="reels"><span class="ico">✨</span><span>노인</span></button>
+            <button class="tab-plus" data-tab-btn="create">
+              <span class="btn"><span class="glyph">+</span></span>
+            </button>
+            <button class="tab" data-tab-btn="history"><span class="ico">💬</span><span>대화</span></button>
+            <button class="tab" data-tab-btn="friends"><span class="ico">👥</span><span>친구</span></button>
+          </nav>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT annotations -->
+    <div>
+      <div class="stage-card">
+        <span class="num">FEATURE 04 · 만들기</span>
+        <h4>틱톡식 영상 만들기</h4>
+        <p>큰 빨간 버튼을 한 번 누르면 끝. 자녀에게 자랑할 수 있게 손주가 알려주듯 음성/자막 가이드를 제공합니다.</p>
+      </div>
+      <div class="stage-card">
+        <span class="num brand">FEATURE 05 · AI 기록</span>
+        <h4>대화기록 + 관심사 매칭</h4>
+        <p>대화 요약을 AI가 정리하고, 좋아하시는 주제를 학습해 다음 매칭 품질을 높입니다. 마음 온도 그래프로 활기도 시각화.</p>
+      </div>
+      <div class="stage-card">
+        <span class="num">FEATURE 06 · 친구 · Toss</span>
+        <h4>친구 — 깔끔한 Toss 톤</h4>
+        <p>‘🤖 잘 맞음’ AI 추천 라벨, 활동 상태 점, 큰 녹색 전화 버튼. 한 손으로 통화까지 두 번이면 충분합니다.</p>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ========================== -->
+  <!-- ====== TAB SHOWCASE ====== -->
+  <!-- ========================== -->
+  <section class="showcase">
+    <div class="showcase-head">
+      <div>
+        <h3>5개 탭 한눈에 보기</h3>
+        <p>탭바 가운데의 + 버튼은 시각적 무게중심. 큼지막한 빨간 녹화 버튼 하나로 어르신도 손주에게 자랑할 영상을 바로 만들 수 있어요.</p>
+      </div>
+      <div class="pill"><span class="dot"></span>총 5개 탭 · 홈 / 노인 / + / 대화 / 친구</div>
+    </div>
+
+    <div class="showcase-grid">
+
+      <!-- SC 02: 오늘의 노인 (Tinder) -->
+      <div class="sc-cell">
+        <div class="label">
+          <div class="num">02</div>
+          <div class="tit"><small>FEED · 노인 탭</small>오늘의 노인 — 스와이프 한 번에 다음 어르신</div>
+        </div>
+        <div class="phone-wrap">
+          <div class="mini-phone">
+            <div class="screen">
+              <div class="statusbar dark"><span>9:35</span><span class="right"><span>📶</span><span class="bat"></span></span></div>
+              <div class="app-area">
+                <div class="reel-subtabs">
+                  <button class="reel-subtab active">오늘의 노인</button>
+                  <button class="reel-subtab">동영상</button>
+                </div>
+                <div class="reel-sub active">
+                  <div class="s-today">
+                    <div class="today-header">
+                      <div class="big">오늘의 <span class="gold">노인</span> 🎯</div>
+                      <div class="sub">스와이프 한 번 → 다음 어르신</div>
+                    </div>
+                    <div class="swipe-stage">
+                      <div class="senior-card behind">
+                        <img class="photo" src="assets/senior-3.png" alt="" />
+                        <div class="shade"></div>
+                      </div>
+                      <div class="senior-card">
+                        <img class="photo" src="assets/senior-2.png" alt="" />
+                        <div class="shade"></div>
+                        <div class="live-badge"><span class="dot"></span>통화 가능</div>
+                        <div class="info">
+                          <div class="nm">박철수 <span class="age">75</span></div>
+                          <div class="loc">📍 서울 종로구</div>
+                          <div class="line">"나랑 통화 한 번 어때유? 😎"</div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="swipe-actions">
+                      <button class="pass"><span class="x">✕</span> 다음</button>
+                      <button class="like">📞 전화</button>
+                    </div>
+                    <div class="swipe-hint"><span>← 다음</span><span>→ 전화</span></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="desc"><b>틴더처럼 한 명씩 큼지막하게.</b> 사진 + 이름 + 한 마디(<i>“나랑 통화 한 번 어때유?”</i>)만. 복잡한 기능 없이 어르신이 사진 보고 마음에 들면 <b>📞 전화</b>, 아니면 <b>✕ 다음</b>. 끝.</div>
+      </div>
+
+      <!-- SC 03: + 만들기 (미니멀) -->
+      <div class="sc-cell">
+        <div class="label">
+          <div class="num">03</div>
+          <div class="tit"><small>CREATE · + 탭</small>딱 두 가지 — 내 얼굴 + 빨간 버튼</div>
+        </div>
+        <div class="phone-wrap">
+          <div class="mini-phone">
+            <div class="screen">
+              <div class="statusbar dark"><span>9:36</span><span class="right"><span>📶</span><span class="bat"></span></span></div>
+              <div class="app-area">
+                <div class="s-create">
+                  <div class="create-cam">
+                    <div class="me"></div>
+                  </div>
+                  <button class="create-close">✕</button>
+                  <div class="create-simple">
+                    <div class="create-label">크게 한 번 눌러서<br/>영상을 찍어요</div>
+                    <button class="record-btn-big"><span class="inner"></span></button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="desc"><b>화면에 단 두 개만.</b> 내 얼굴 풀스크린 + 큰 빨간 녹화 버튼. 타이머·필터·도구·모드 전부 뺐어요. <b>"크게 한 번 눌러서 영상을 찍어요"</b> 한 줄이 전부. 손주가 알려주듯 친절하게.</div>
+      </div>
+
+      <!-- SC 04: 대화 (Toss-clean) -->
+      <div class="sc-cell">
+        <div class="label">
+          <div class="num">04</div>
+          <div class="tit"><small>HISTORY · 대화 탭</small>대화기록 — AI 요약 + 마음 온도</div>
+        </div>
+        <div class="phone-wrap">
+          <div class="mini-phone">
+            <div class="screen">
+              <div class="statusbar"><span>10:12</span><span class="right"><span>📶</span><span class="bat"></span></span></div>
+              <div class="app-area">
+                <div class="s-history">
+                  <div class="s-history-top"><h3>대화기록</h3><div class="ico">📅</div></div>
+                  <div class="s-history-scroll">
+                    <div class="weekly-card">
+                      <div class="row">
+                        <div><div class="label">이번 주</div><div class="big">12<span class="unit">회</span></div></div>
+                        <div style="text-align:right"><div class="label">마음 온도</div><div class="big" style="color:var(--brand-deep)">+4.5<span class="unit">°</span></div></div>
+                      </div>
+                      <div class="bars">
+                        <b style="height:30%"></b><b style="height:55%"></b><b style="height:40%"></b>
+                        <b style="height:75%"></b><b style="height:90%"></b><b style="height:60%"></b><b style="height:85%"></b>
+                      </div>
+                    </div>
+                    <div class="section-label">오늘</div>
+                    <div class="history-item">
+                      <div class="av" style="background-image:url('assets/senior-3.png')"></div>
+                      <div class="body">
+                        <div class="r1"><span class="nm">이순자</span><span class="age">71세</span><span class="time">9:30</span></div>
+                        <div class="r2">
+                          <span class="tag-ai">🤖 관심사</span>
+                          <span class="tag-topic">💎 보물</span>
+                          <span class="tag-heat">+1.0°</span>
+                        </div>
+                        <div class="summary"><b>"보물은 사람이더라"</b> 따뜻한 한 마디.</div>
+                      </div>
+                    </div>
+                    <div class="history-item">
+                      <div class="av" style="background-image:url('assets/senior-2.png')"></div>
+                      <div class="body">
+                        <div class="r1"><span class="nm">박철수</span><span class="age">75세</span><span class="time">어제</span></div>
+                        <div class="r2">
+                          <span class="tag-topic">🍚 추억의 음식</span>
+                          <span class="tag-heat">+0.8°</span>
+                        </div>
+                        <div class="summary">시장 골목 추억 → <b>다음엔 사진 보여주기로</b></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="desc"><b>실제 어르신 사진 + AI 한 줄 요약.</b> 상단에 이번 주 <b>12회 / 마음 온도 +4.5°</b> 위클리 그래프, 카드마다 ‘관심사 일치’ 태그가 다음 매칭 품질에 반영됩니다.</div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ========== TAB MAP ========== -->
+  <section class="showcase" style="margin-top:60px">
+    <div class="showcase-head">
+      <div>
+        <h3>탭바 구성 · 5칸 + 가운데 시그니처</h3>
+        <p>가운데 + 버튼은 만들고 싶은 충동을 놓치지 않게 가장 큰 컬러풀 버튼으로. 양옆 ‘만나기(홈/노인)’, 반대편 ‘이어가기(대화/친구)’로 좌·우 의미를 갈랐습니다.</p>
+      </div>
+    </div>
+
+    <div style="background:var(--surface);border:1.5px solid var(--line);border-radius:24px;padding:32px;display:grid;grid-template-columns:repeat(5,1fr);gap:18px">
+      <div style="text-align:center"><div style="font-size:48px;margin-bottom:6px">🏠</div><div style="font-weight:900;font-size:17px">홈</div><div style="font-size:13px;color:var(--ink-3);font-weight:600;margin-top:4px;line-height:1.5">즉시 매칭 · 임영웅 노래<br/>코 커지는 깜짝 통화</div></div>
+      <div style="text-align:center"><div style="font-size:48px;margin-bottom:6px">✨</div><div style="font-weight:900;font-size:17px">노인</div><div style="font-size:13px;color:var(--ink-3);font-weight:600;margin-top:4px;line-height:1.5">오늘의 노인 스와이프<br/>+ 회춘 댄스 영상</div></div>
+      <div style="text-align:center">
+        <div style="display:inline-grid;place-items:center;width:60px;height:44px;border-radius:14px;background:linear-gradient(135deg,#22D6FF,var(--hot),#FFD66E);color:#fff;font-size:28px;font-weight:300;margin-bottom:6px;box-shadow:0 8px 18px -6px rgba(254,44,85,.4)">+</div>
+        <div style="font-weight:900;font-size:17px;color:var(--hot)">만들기</div>
+        <div style="font-size:13px;color:var(--ink-3);font-weight:600;margin-top:4px;line-height:1.5">얼굴 + 큰 빨간 버튼<br/>딱 두 가지만</div>
+      </div>
+      <div style="text-align:center"><div style="font-size:48px;margin-bottom:6px">💬</div><div style="font-weight:900;font-size:17px">대화</div><div style="font-size:13px;color:var(--ink-3);font-weight:600;margin-top:4px;line-height:1.5">AI 요약 + 마음 온도<br/>+4.5° 활기 그래프</div></div>
+      <div style="text-align:center"><div style="font-size:48px;margin-bottom:6px">👥</div><div style="font-weight:900;font-size:17px">친구</div><div style="font-size:13px;color:var(--ink-3);font-weight:600;margin-top:4px;line-height:1.5">실제 사진 + AI 추천<br/>큰 녹색 전화 버튼</div></div>
+    </div>
+  </section>
+
+  <div class="footer-cred">
+    <div>할미고 · 따뜻한 친구를 만드는 공간 · 어르신 영상 매칭 + 짧은 영상 SNS</div>
+    <div>디자인 시스템 · Pretendard · 시니어 UX</div>
+  </div>
+
+</div>
+
+<script>
+  // Tab switching
+  const tabs = document.querySelectorAll('[data-tab-btn]');
+  const panes = document.querySelectorAll('.screen-pane');
+  const homeStates = document.getElementById('homeStates');
+  tabs.forEach(t => {
+    t.addEventListener('click', () => {
+      const k = t.dataset.tabBtn;
+      tabs.forEach(x => x.classList.toggle('active', x === t));
+      panes.forEach(p => p.classList.toggle('active', p.dataset.tab === k));
+      homeStates.style.display = (k === 'home') ? 'flex' : 'none';
+
+      // 노인 탭 진입 시 항상 '오늘의 노인' 서브탭으로 리셋
+      if (k === 'reels'){
+        document.querySelectorAll('.reel-subtab').forEach(x =>
+          x.classList.toggle('active', x.dataset.sub === 'today'));
+        document.querySelectorAll('.reel-sub').forEach(s =>
+          s.classList.toggle('active', s.dataset.sub === 'today'));
+        document.querySelectorAll('.reel-video').forEach(v => v.pause());
+      }
+    });
+  });
+
+  // Home sub-state switching
+  const stateBtns = document.querySelectorAll('[data-home-state]');
+  const homeSubs = document.querySelectorAll('.home-sub');
+  stateBtns.forEach(b => {
+    if (!b.classList.contains('state-btn')) return;
+    b.addEventListener('click', () => {
+      const k = b.dataset.homeState;
+      stateBtns.forEach(x => {
+        if (x.classList.contains('state-btn')) x.classList.toggle('active', x === b);
+      });
+      homeSubs.forEach(s => s.classList.toggle('active', s.dataset.homeState === k));
+    });
+  });
+
+  // Match button → demo to matching state
+  document.getElementById('matchBtn')?.addEventListener('click', () => {
+    document.querySelector('[data-home-state="matching"].state-btn').click();
+    setTimeout(() => {
+      document.querySelector('[data-home-state="incall"].state-btn').click();
+    }, 3500);
+  });
+
+  // Reels sub-tab switching (오늘의 노인 / 동영상)
+  document.querySelectorAll('.reel-subtab').forEach(b => {
+    b.addEventListener('click', () => {
+      const k = b.dataset.sub;
+      document.querySelectorAll('.reel-subtab').forEach(x => x.classList.toggle('active', x === b));
+      document.querySelectorAll('.reel-sub').forEach(s => s.classList.toggle('active', s.dataset.sub === k));
+      // play/pause the video based on visibility
+      document.querySelectorAll('.reel-video').forEach(v => {
+        if (k === 'video') {
+          v.currentTime = 0;
+          // Try to play with sound (user just tapped — counts as user gesture)
+          v.muted = false;
+          const p = v.play();
+          if (p && p.catch){
+            p.catch(() => { v.muted = true; v.play().catch(()=>{}); });
+          }
+          // Sync sound button state
+          document.getElementById('reelSoundBtn')?.classList.toggle('unmuted', !v.muted);
+        }
+        else { v.pause(); }
+      });
+    });
+  });
+
+  // Sound toggle button on the dance reel
+  document.getElementById('reelSoundBtn')?.addEventListener('click', () => {
+    const v = document.querySelector('.reel-sub[data-sub="video"] .reel-video');
+    if (!v) return;
+    v.muted = !v.muted;
+    if (!v.muted) v.play().catch(()=>{ v.muted = true; });
+    document.getElementById('reelSoundBtn').classList.toggle('unmuted', !v.muted);
+  });
+
+  // ============================================================
+  // 오늘의 노인 — 단순 스와이프 (X키 = 다음, 📞 = 매칭 팝업)
+  // ============================================================
+  const SENIORS = [
+    { name:'박철수', age:75, loc:'서울 종로구',  line:'"나랑 통화 한 번 어때유? 😎"',         photo:'assets/senior-2.png' },
+    { name:'이순자', age:71, loc:'광주 북구',    line:'"한옥에서 한 잔, 어때요? 🍵"',          photo:'assets/senior-3.png' },
+    { name:'김만복', age:72, loc:'서울 종로구',  line:'"손주 자랑 한 시간만 들어줘요 👶"',      photo:'assets/grandpa-normal-small.png' },
+    { name:'김영자', age:73, loc:'부산 해운대',  line:'"낮잠보다 너랑 떠드는 게 더 재밌어! 🛏️"', photo:'assets/senior-4.png' },
+    { name:'최영자', age:78, loc:'대구 수성구',  line:'"진주처럼 빛나는 대화 어때요? ✨"',      photo:'assets/senior-5.png' },
+  ];
+  let sIdx = 0;
+
+  const $top    = document.getElementById('seniorTop');
+  const $behind = document.getElementById('seniorBehind');
+  const $name   = document.getElementById('seniorName');
+  const $age    = document.getElementById('seniorAge');
+  const $loc    = document.getElementById('seniorLoc');
+  const $line   = document.getElementById('seniorLine');
+  const $matchPop   = document.getElementById('matchPop');
+  const $matchPhoto = document.getElementById('matchPhoto');
+  const $matchName  = document.getElementById('matchName');
+
+  function renderTop(){
+    const s = SENIORS[sIdx % SENIORS.length];
+    const n = SENIORS[(sIdx+1) % SENIORS.length];
+    if (!$top) return;
+    $top.querySelector('.photo').src = s.photo;
+    $name.textContent = s.name;
+    $age.textContent  = s.age + '세';
+    $loc.textContent  = s.loc;
+    $line.textContent = s.line;
+    if ($behind) $behind.querySelector('.photo').src = n.photo;
+  }
+
+  function swipe(direction){
+    if (!$top || $top.classList.contains('swipe-left') || $top.classList.contains('swipe-right')) return;
+    $top.classList.add(direction === 'like' ? 'swipe-right' : 'swipe-left');
+    if (direction === 'like'){
+      // show match popup after card flies
+      setTimeout(() => {
+        const s = SENIORS[sIdx % SENIORS.length];
+        $matchPhoto.style.backgroundImage = `url('${s.photo}')`;
+        $matchName.textContent = s.name;
+        $matchPop.classList.add('show');
+      }, 380);
+    } else {
+      // advance to next senior
+      setTimeout(() => {
+        $top.classList.remove('swipe-left','swipe-right');
+        sIdx++;
+        renderTop();
+      }, 420);
+    }
+  }
+
+  document.getElementById('passBtn')?.addEventListener('click', () => swipe('pass'));
+  document.getElementById('likeBtn')?.addEventListener('click', () => swipe('like'));
+
+  document.getElementById('closeMatchBtn')?.addEventListener('click', () => {
+    $matchPop.classList.remove('show');
+    setTimeout(() => {
+      $top.classList.remove('swipe-left','swipe-right');
+      sIdx++;
+      renderTop();
+    }, 50);
+  });
+  document.getElementById('callNowBtn')?.addEventListener('click', () => {
+    // close match popup, switch to home tab in-call state
+    $matchPop.classList.remove('show');
+    setTimeout(() => {
+      $top.classList.remove('swipe-left','swipe-right');
+      sIdx++;
+      renderTop();
+    }, 50);
+    // switch to home tab and incall state
+    document.querySelector('[data-tab-btn="home"]').click();
+    document.querySelector('[data-home-state="incall"].state-btn').click();
+  });
+
+  // ============================================================
+  // 통화중 끝내기 버튼 → 홈 idle 로 복귀
+  // ============================================================
+  document.querySelectorAll('.s-incall .dock-btn').forEach(btn => {
+    if (btn.querySelector('.end')){
+      btn.addEventListener('click', () => {
+        document.querySelector('[data-home-state="idle"].state-btn').click();
+      });
+    }
+  });
+
+  // Random "surprise" filter cycle during in-call.
+  // Periodically toggle .filter-on on the incall scene to swap photos & show toast.
+  (function startFilterCycle(){
+    const scene = document.getElementById('incallScene');
+    if (!scene) return;
+    function once(){
+      const onMs   = 15000;                       // funny face visible: 15초 유지
+      const offMs  = 6000 + Math.random()*4000;   // gap until next surprise
+      scene.classList.add('filter-on');
+      setTimeout(() => {
+        scene.classList.remove('filter-on');
+        setTimeout(once, offMs);
+      }, onMs);
+    }
+    // first surprise after 10s (정상 사진으로 먼저 시작)
+    setTimeout(once, 10000);
+  })();
+  // Animated heart counter on the dance reel (펑펑 올라가는 카운터)
+  (function heartTicker(){
+    const el = document.querySelector('.reel-sub[data-sub="video"] .rail-btn .cnt');
+    if (!el) return;
+    let n = 128400;
+    setInterval(() => {
+      n += Math.floor(1 + Math.random()*7);
+      el.textContent = (n/1000).toFixed(1) + 'K';
+    }, 800);
+  })();
+  // ============================================================
+  // Create — 녹화 버튼 토글 (red circle ↔ red square)
+  // ============================================================
+  document.getElementById('recordBtn')?.addEventListener('click', e => {
+    e.currentTarget.classList.toggle('recording');
+  });
+
+</script>
+</body>
+</html>
