@@ -1765,19 +1765,17 @@ body{
                   <button class="reel-subtab active">오늘의 노인</button>
                   <button class="reel-subtab">동영상</button>
                 </div>
-                <div class="reel-sub active">
+                <div class="reel-sub active" data-sc="02">
                   <div class="s-today">
                     <div class="today-header">
                       <div class="big">오늘의 <span class="gold">노인</span> 🎯</div>
                       <div class="sub">스와이프 한 번 → 다음 어르신</div>
                     </div>
                     <div class="swipe-stage">
-                      <div class="senior-card behind">
-                        <img class="photo" src="project/assets/senior-3.png" alt="" />
+                      <div class="senior-card behind" style="background:url('project/assets/senior-3.png') center 20%/cover no-repeat">
                         <div class="shade"></div>
                       </div>
-                      <div class="senior-card">
-                        <img class="photo" src="project/assets/senior-2.png" alt="" />
+                      <div class="senior-card" style="background:url('project/assets/senior-2.png') center 20%/cover no-repeat">
                         <div class="shade"></div>
                         <div class="live-badge"><span class="dot"></span>통화 가능</div>
                         <div class="info">
@@ -1930,11 +1928,12 @@ body{
       panes.forEach(p => p.classList.toggle('active', p.dataset.tab === k));
       homeStates.style.display = (k === 'home') ? 'flex' : 'none';
 
-      // 노인 탭 진입 시 항상 '오늘의 노인' 서브탭으로 리셋
+      // 노인 탭 진입 시 항상 '오늘의 노인' 서브탭으로 리셋 (메인 폰만)
       if (k === 'reels'){
-        document.querySelectorAll('.reel-subtab').forEach(x =>
+        const mainPhone = document.querySelector('.phone-stage .phone');
+        mainPhone?.querySelectorAll('.reel-subtab').forEach(x =>
           x.classList.toggle('active', x.dataset.sub === 'today'));
-        document.querySelectorAll('.reel-sub').forEach(s =>
+        mainPhone?.querySelectorAll('.reel-sub').forEach(s =>
           s.classList.toggle('active', s.dataset.sub === 'today'));
         document.querySelectorAll('.reel-video').forEach(v => v.pause());
       }
@@ -1963,12 +1962,13 @@ body{
     }, 3500);
   });
 
-  // Reels sub-tab switching (오늘의 노인 / 동영상)
-  document.querySelectorAll('.reel-subtab').forEach(b => {
+  // Reels sub-tab switching — 메인 폰만 (쇼케이스 미니폰 제외)
+  const mainPhone = document.querySelector('.phone-stage .phone');
+  mainPhone?.querySelectorAll('.reel-subtab').forEach(b => {
     b.addEventListener('click', () => {
       const k = b.dataset.sub;
-      document.querySelectorAll('.reel-subtab').forEach(x => x.classList.toggle('active', x === b));
-      document.querySelectorAll('.reel-sub').forEach(s => s.classList.toggle('active', s.dataset.sub === k));
+      mainPhone.querySelectorAll('.reel-subtab').forEach(x => x.classList.toggle('active', x === b));
+      mainPhone.querySelectorAll('.reel-sub').forEach(s => s.classList.toggle('active', s.dataset.sub === k));
       // play/pause the video based on visibility
       document.querySelectorAll('.reel-video').forEach(v => {
         if (k === 'video') {
